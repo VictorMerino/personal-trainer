@@ -551,9 +551,9 @@ works — which is precisely the thesis.
 2. ~~Readiness policy~~ — **designed** (energy/pain/time decision table, pain ×
    limitation merge rule, `CHOICE` outcome). See
    `docs/adr/0001-readiness-policy.md` and `docs/features/readiness-policy.md`.
-3. **`WorkoutPlan` Zod schema** — block structure, what each set prescribes, and what
-   happens when a plan is syntactically valid but violates a business rule (reject
-   whole plan vs prune the offending exercise).
+3. ~~`WorkoutPlan` Zod schema~~ — **designed** (discriminated `SetTarget` per
+   progression kind, per-set arrays, reject-whole-plan on business violation). See
+   `docs/adr/0002-workout-plan-schema.md` and `docs/features/workout-plan-schema.md`.
 4. **Deterministic generator** — split selection, exercise selection by pattern with
    equipment and contraindication filtering plus rotation, sets/reps by goal and
    readiness.
