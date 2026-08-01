@@ -371,11 +371,20 @@ than asking for it in a prompt.
 
 ## 7. AI layer
 
+> This section predates the detailed design work below — see
+> `docs/adr/0005-workout-planner-port.md` for the actual `WorkoutPlanner` port
+> contract, `docs/adr/0006-prompt-construction.md` for prompt versioning and
+> context assembly, and `docs/adr/0011-endpoint-contracts.md` for the current,
+> precise shape of `/api/workouts/generate` (quota exceedance is invisible to the
+> client, `ACTIVE_RECOVERY` never reaches this endpoint at all).
+
 ### Hard rule
 
 **The provider API key never leaves the server.** Every LLM call goes through an
 own endpoint (`/api/workouts/generate`) that: verifies the session → checks the
-user's quota → calls the provider with the env key → validates the response with Zod.
+user's quota (atomically, `docs/adr/0007-data-model-rls.md`) → calls the provider
+with the env key → validates the response with Zod (schema **and** business
+rules, `docs/adr/0002-workout-plan-schema.md`).
 
 ### Degradation chain
 
@@ -405,9 +414,16 @@ export class FallbackChainPlanner implements WorkoutPlanner {
 
 Because every link implements the same port, **the chain is tested with no network**:
 inject one planner that always fails and one that succeeds, assert the ordering.
+`tryGenerate` returns a Result, never throws, for exactly this reason — see
+`docs/adr/0005-workout-planner-port.md` decision 1. Exhausting the entire chain
+(including the deterministic link, which should never fail) throws
+`NoPlannerAvailableError` instead — a genuine incident, not a routine outcome
+(same ADR, decision 2).
 
-Log which link served each request. "Groq down → OpenRouter served it → user never
-noticed" is an excellent moment for the demo video.
+Log which link served each request — persisted as `WorkoutPlan.generatedBy`, not
+just a log line (`docs/adr/0002-workout-plan-schema.md` decision 4). "Groq down →
+OpenRouter served it → user never noticed" is an excellent moment for the demo
+video.
 
 ### Provider notes
 
@@ -433,9 +449,24 @@ already-filtered subset:
 id | name | pattern | equipment | level
 ```
 
+Alongside it, only the `perPattern` view of `HistorySummary` (days since each
+pattern was trained, recent mean RPE, set-count volume) — never `perExercise`
+data, never raw `SetLog` rows. One shared history computation feeds both this and
+the deterministic generator; see `docs/adr/0005-workout-planner-port.md`
+decisions 4–5. Context assembly (`buildPromptContext`) is a pure, independently
+tested function — see `docs/adr/0006-prompt-construction.md` decision 2.
+
 The output schema references exercises **by ID from that list**. Validation checks
 the ID exists *and* was in the permitted set. Invented ID → validation fails →
-retry or next link in the chain.
+retry or next link in the chain. A business-rule violation (bad ID, or any other
+rule) rejects the **whole plan**, never a pruned/patched one — see
+`docs/adr/0002-workout-plan-schema.md` decision 5.
+
+Every field reaching the prompt originates from a button/enum selection or a
+system-computed value — no user-typed free text reaches the LLM for the MVP's
+all-button UI. This is stated as a current property, not a permanent guarantee —
+see `docs/adr/0006-prompt-construction.md` decision 3 for why it isn't claimed
+to survive a future voice/text interaction mode.
 
 ---
 
@@ -589,8 +620,11 @@ works — which is precisely the thesis.
    pain step, dedicated `CHOICE` screen, autosave + auto-start rest timer, shared
    `Skeleton`/`Toast`/`RpeBar`, multi-tab session conflict deliberately deferred).
    See `docs/adr/0008-ui-flows.md` and `docs/features/ui-flows.md`.
-10. **Endpoint contracts** — routes, request/response shapes, error codes, session
-    and quota middleware.
+10. ~~Endpoint contracts~~ — **designed** (check-in and generation as separate
+    calls due to the `CHOICE` pause point, `ACTIVE_RECOVERY` built inline with no
+    quota/planner involved, quota exceedance invisible to the client, `REST`
+    recorded as a zero-exercise plan excluded from adherence). See
+    `docs/adr/0011-endpoint-contracts.md` and `docs/features/endpoint-contracts.md`.
 11. **Test strategy per layer.**
 12. **Build plan** — weekly ordering and what gets delegated to the agent in each phase.
 

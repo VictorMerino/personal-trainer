@@ -91,6 +91,10 @@ aggregate entirely, same as the single-session rule in ADR 0009 decision 4
   can be added later without changing the read-model's shape — only how
   it's produced, which is an internal implementation detail behind the
   `computeProgressSnapshot` function boundary.
+- **Addendum from `docs/adr/0011-endpoint-contracts.md` decision 4:** a
+  `workout_plans` row with zero prescribed sets (a `REST`-choice day) is
+  excluded from the adherence denominator entirely, not counted as 0/0.
+  This refines, not redefines, decision 4's adherence formula above.
 
 ## Alternatives considered
 
