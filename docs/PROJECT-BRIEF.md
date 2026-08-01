@@ -43,8 +43,9 @@ itself.
 
 1. **Onboarding / profile** — goal, experience level, default equipment context,
    and active limitations (injuries).
-2. **Daily check-in** — energy, pain (zone + level), available minutes, and
-   today's equipment context. Four taps, zero typing.
+2. **Daily check-in** — energy, pain (zone(s) + level, multiple zones allowed),
+   available minutes, and today's equipment context. Four steps, all-button,
+   zero typing.
 3. **AI workout generation** — conditioned on profile, check-in and training history.
 4. **Gym logging** — big buttons, RPE per set, autosave, rest timer.
 5. **Progress tracking** — adherence, volume per movement pattern, bodyweight.
@@ -166,6 +167,12 @@ create empty folders out of dogma.
 | `WorkoutPlan` | prescribed session: blocks → exercises → target sets |
 | `SetLog` | what actually happened: load, reps, **RPE** |
 | `ProgressSnapshot` | aggregated volume, adherence, bodyweight |
+
+> A logged-short set (fewer reps than prescribed) needs no special
+> handling — but a *skipped* exercise or an early-ended session does, and
+> wasn't originally covered here. See `docs/adr/0009-incomplete-sessions.md`
+> for how skips and session finalization are represented, and how they
+> feed adherence.
 
 ### Guardrails live in the domain, not in the prompt
 
@@ -576,8 +583,10 @@ works — which is precisely the thesis.
    JSONB `WorkoutPlan` + normalized `SetLog`, uniform `user_id = auth.uid()` RLS,
    atomic quota increment). See `docs/adr/0007-data-model-rls.md` and
    `docs/features/data-model-rls.md`.
-9. **UI flows** — the 4-tap check-in and the gym logger (big buttons, RPE bar, rest
-   timer). Reusable `Skeleton` for loading, `Toast` for notifications.
+9. ~~UI flows~~ — **designed** (all-button check-in with an expanding multi-zone
+   pain step, dedicated `CHOICE` screen, autosave + auto-start rest timer, shared
+   `Skeleton`/`Toast`/`RpeBar`, multi-tab session conflict deliberately deferred).
+   See `docs/adr/0008-ui-flows.md` and `docs/features/ui-flows.md`.
 10. **Endpoint contracts** — routes, request/response shapes, error codes, session
     and quota middleware.
 11. **Test strategy per layer.**
