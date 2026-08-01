@@ -572,7 +572,10 @@ works — which is precisely the thesis.
    from `schemaVersion`, pure `buildPromptContext`, free-text input structurally
    excluded for the MVP's all-button UI — not claimed as permanent). See
    `docs/adr/0006-prompt-construction.md` and `docs/features/prompt-construction.md`.
-8. **Data model and RLS policies** — including the daily quota table.
+8. ~~Data model and RLS policies~~ — **designed** (multi-zone pain per check-in,
+   JSONB `WorkoutPlan` + normalized `SetLog`, uniform `user_id = auth.uid()` RLS,
+   atomic quota increment). See `docs/adr/0007-data-model-rls.md` and
+   `docs/features/data-model-rls.md`.
 9. **UI flows** — the 4-tap check-in and the gym logger (big buttons, RPE bar, rest
    timer). Reusable `Skeleton` for loading, `Toast` for notifications.
 10. **Endpoint contracts** — routes, request/response shapes, error codes, session
