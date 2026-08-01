@@ -558,9 +558,11 @@ works — which is precisely the thesis.
    goal-based rep ranges, DELOAD via RPE cap + set reduction). See
    `docs/adr/0003-deterministic-generator.md` and
    `docs/features/deterministic-generator.md`.
-5. **Progression and autoregulation rules** — how logged RPE drives load changes,
-   stall detection and deload, reintroducing exercises after a limitation resolves.
-   *This is the heart of the thesis.*
+5. ~~Progression and autoregulation rules~~ — **designed** (RPE-vs-target load
+   adjustment, stall detection as a per-exercise backoff distinct from
+   readiness-DELOAD, conservative reintroduction after a resolved limitation). See
+   `docs/adr/0004-progression-autoregulation.md` and
+   `docs/features/progression-autoregulation.md`. *This is the heart of the thesis.*
 6. **`WorkoutPlanner` port contract** — especially the **history summarisation**
    (volume per pattern, days since each group was trained, recent mean RPE). A domain
    transformation with its own tests. Never send raw set logs.
