@@ -554,9 +554,10 @@ works — which is precisely the thesis.
 3. ~~`WorkoutPlan` Zod schema~~ — **designed** (discriminated `SetTarget` per
    progression kind, per-set arrays, reject-whole-plan on business violation). See
    `docs/adr/0002-workout-plan-schema.md` and `docs/features/workout-plan-schema.md`.
-4. **Deterministic generator** — split selection, exercise selection by pattern with
-   equipment and contraindication filtering plus rotation, sets/reps by goal and
-   readiness.
+4. ~~Deterministic generator~~ — **designed** (full-body split for MVP, LRU rotation,
+   goal-based rep ranges, DELOAD via RPE cap + set reduction). See
+   `docs/adr/0003-deterministic-generator.md` and
+   `docs/features/deterministic-generator.md`.
 5. **Progression and autoregulation rules** — how logged RPE drives load changes,
    stall detection and deload, reintroducing exercises after a limitation resolves.
    *This is the heart of the thesis.*
