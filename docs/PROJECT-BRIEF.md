@@ -563,9 +563,11 @@ works — which is precisely the thesis.
    readiness-DELOAD, conservative reintroduction after a resolved limitation). See
    `docs/adr/0004-progression-autoregulation.md` and
    `docs/features/progression-autoregulation.md`. *This is the heart of the thesis.*
-6. **`WorkoutPlanner` port contract** — especially the **history summarisation**
-   (volume per pattern, days since each group was trained, recent mean RPE). A domain
-   transformation with its own tests. Never send raw set logs.
+6. ~~`WorkoutPlanner` port contract~~ — **designed** (Result-style `tryGenerate`,
+   chain-exhaustion throws `NoPlannerAvailableError`, elevated failure rate handled
+   via telemetry not control flow, one shared `HistorySummary` read two ways,
+   volume as set-count not tonnage). See `docs/adr/0005-workout-planner-port.md` and
+   `docs/features/workout-planner-port.md`.
 7. **Prompt construction** — system prompt, context serialisation, prompt versioning
    tied to the schema version. Test the prompt *assembly*, not the response.
 8. **Data model and RLS policies** — including the daily quota table.
