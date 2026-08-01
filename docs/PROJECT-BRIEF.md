@@ -48,7 +48,8 @@ itself.
    zero typing.
 3. **AI workout generation** — conditioned on profile, check-in and training history.
 4. **Gym logging** — big buttons, RPE per set, autosave, rest timer.
-5. **Progress tracking** — adherence, volume per movement pattern, bodyweight.
+5. **Progress tracking** — adherence, volume per movement pattern. (Bodyweight
+   deferred to roadmap, paired with nutrition — see `docs/adr/0010-progress-tracking.md`.)
 
 ### Explicitly deferred (documented as deliberate scope decisions)
 
@@ -166,7 +167,7 @@ create empty folders out of dogma.
 | `Readiness` | value object derived from the check-in |
 | `WorkoutPlan` | prescribed session: blocks → exercises → target sets |
 | `SetLog` | what actually happened: load, reps, **RPE** |
-| `ProgressSnapshot` | aggregated volume, adherence, bodyweight |
+| `ProgressSnapshot` | computed on-demand: adherence, volume per pattern (bodyweight deferred to roadmap) |
 
 > A logged-short set (fewer reps than prescribed) needs no special
 > handling — but a *skipped* exercise or an early-ended session does, and
@@ -507,9 +508,9 @@ A fresh account starts as an **empty app**: no history, no charts, nothing that
 shows the value. Half the application becomes invisible until it has data.
 
 Ship a **seed script** that populates the account with 3–4 weeks of realistic
-history: logged sessions, varied RPE, bodyweight trend, and at least one day where
-pain forced active recovery. Version the script in the repo — it is evidence of good
-work in itself. Also provide a "reset my demo data" path.
+history: logged sessions, varied RPE, adherence and volume trend, and at least one
+day where pain forced active recovery. Version the script in the repo — it is
+evidence of good work in itself. Also provide a "reset my demo data" path.
 
 ---
 
@@ -538,9 +539,10 @@ the project has a future.
 
 - **In the app:** a visible medical disclaimer. The pain guardrail already exists as
   domain logic anyway.
-- **In the repo:** one short ADR on health-data handling — training data, bodyweight
-  and injuries are **special-category data under GDPR Art. 9**; explicit consent as
-  legal basis, data minimisation, EU region on Supabase. Half a page.
+- **In the repo:** one short ADR on health-data handling — training data and
+  injuries are **special-category data under GDPR Art. 9**; explicit consent as
+  legal basis, data minimisation, EU region on Supabase. Half a page. (Bodyweight
+  will need the same treatment once it ships alongside nutrition, post-MVP.)
 - **In the roadmap:** full GDPR (export, deletion, granular consent) as v2.
 
 Not one paragraph more.
@@ -596,10 +598,12 @@ works — which is precisely the thesis.
 
 ## 13. Roadmap (post-MVP)
 
-Nutrition tracking · voice interaction (Whisper) and audio workout export
-(ElevenLabs) · push notifications · cardio as primary training · **marathon
-preparation with full periodization** · VO2max and advanced metrics · full GDPR
-tooling · catalog migration to DB with user-contributed exercises.
+Nutrition tracking **with bodyweight tracking** (bundled together — bodyweight
+only becomes actionable with nutrition's energy-balance context, see
+`docs/adr/0010-progress-tracking.md`) · voice interaction (Whisper) and audio
+workout export (ElevenLabs) · push notifications · cardio as primary training ·
+**marathon preparation with full periodization** · VO2max and advanced metrics ·
+full GDPR tooling · catalog migration to DB with user-contributed exercises.
 
 Marathon prep is the headline for "where this project is going" — it is more useful
 in the roadmap than in the MVP.
