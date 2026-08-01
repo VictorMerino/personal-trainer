@@ -568,8 +568,10 @@ works — which is precisely the thesis.
    via telemetry not control flow, one shared `HistorySummary` read two ways,
    volume as set-count not tonnage). See `docs/adr/0005-workout-planner-port.md` and
    `docs/features/workout-planner-port.md`.
-7. **Prompt construction** — system prompt, context serialisation, prompt versioning
-   tied to the schema version. Test the prompt *assembly*, not the response.
+7. ~~Prompt construction~~ — **designed** (`PROMPT_VERSION` tracked independently
+   from `schemaVersion`, pure `buildPromptContext`, free-text input structurally
+   excluded for the MVP's all-button UI — not claimed as permanent). See
+   `docs/adr/0006-prompt-construction.md` and `docs/features/prompt-construction.md`.
 8. **Data model and RLS policies** — including the daily quota table.
 9. **UI flows** — the 4-tap check-in and the gym logger (big buttons, RPE bar, rest
    timer). Reusable `Skeleton` for loading, `Toast` for notifications.
