@@ -630,7 +630,12 @@ works — which is precisely the thesis.
     with manual/scheduled live smoke tests, Supabase JS client integration
     tests for RLS, golden-path + CHOICE-branch E2E). See
     `docs/adr/0012-test-strategy.md` and `docs/features/test-strategy.md`.
-12. **Build plan** — weekly ordering and what gets delegated to the agent in each phase.
+12. ~~Build plan~~ — **designed** (pace target of ~10 reviewable PRs/day
+    instead of a fixed calendar, agent-drafts/human-reviews-every-PR
+    uniformly across all layers including domain, PR ordering follows the
+    dependency graph: scaffolding → domain → infrastructure → endpoints →
+    UI → test infra/compliance/docs). See
+    `docs/adr/0013-build-plan.md`.
 
 ---
 
