@@ -1,5 +1,7 @@
 # Astro Starter Kit: Minimal
 
+[![CI](https://github.com/VictorMerino/personal-trainer/actions/workflows/ci.yml/badge.svg)](https://github.com/VictorMerino/personal-trainer/actions/workflows/ci.yml)
+
 ```sh
 pnpm create astro@latest -- --template minimal
 ```
