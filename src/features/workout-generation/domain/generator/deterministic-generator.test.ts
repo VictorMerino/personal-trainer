@@ -63,6 +63,32 @@ describe('generateDeterministicPlan', () => {
     expect(deload.blocks[0].exercises[0].sets.length).toBeLessThan(normal.blocks[0].exercises[0].sets.length);
   });
 
+  it('applies a per-exercise stall/reintroduction RPE cap independently of the session-level mode', () => {
+    const plan = generateDeterministicPlan(baseInput());
+    const cappedExerciseId = plan.blocks[0].exercises[0].exerciseId;
+
+    const capped = generateDeterministicPlan(
+      baseInput({ rpeTargetCapByExerciseId: new Map([[cappedExerciseId, 5]]) }),
+    );
+
+    expect(capped.blocks[0].exercises[0].sets.every((s) => s.rpeTarget === 5)).toBe(true);
+    expect(
+      capped.blocks[0].exercises.slice(1).every((e) => e.sets.every((s) => s.rpeTarget === 8)),
+    ).toBe(true);
+  });
+
+  it('composes a per-exercise cap with the session DELOAD cap by taking the lower RPE', () => {
+    const plan = generateDeterministicPlan(baseInput({ mode: 'DELOAD' }));
+    const cappedExerciseId = plan.blocks[0].exercises[0].exerciseId;
+
+    const capped = generateDeterministicPlan(
+      baseInput({ mode: 'DELOAD', rpeTargetCapByExerciseId: new Map([[cappedExerciseId, 9]]) }),
+    );
+
+    // The cap (9) is above DELOAD's own RPE target (6), so DELOAD still wins.
+    expect(capped.blocks[0].exercises[0].sets.every((s) => s.rpeTarget === 6)).toBe(true);
+  });
+
   it('produces an empty-block NORMAL/DELOAD plan when no candidate is valid for any pattern', () => {
     const plan = generateDeterministicPlan(baseInput({ catalog: [] }));
     expect(plan.blocks).toEqual([]);
