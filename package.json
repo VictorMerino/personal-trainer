@@ -13,6 +13,8 @@
     "astro": "astro",
     "lint": "eslint .",
     "typecheck": "astro check && tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "depcruise": "depcruise src",
     "depcruise:graph": "depcruise src --output-type dot | dot -T svg > docs/dependency-graph.svg",
     "secretlint": "secretlint --secretlintrc .secretlintrc.json '**/*'",
@@ -22,12 +24,14 @@
     "@astrojs/svelte": "^9.0.1",
     "astro": "^7.1.6",
     "svelte": "^5.56.8",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@eslint/js": "^10.0.1",
     "@secretlint/secretlint-rule-preset-recommend": "^13.0.4",
+    "@vitest/coverage-v8": "^4.1.10",
     "dependency-cruiser": "^18.1.0",
     "eslint": "^10.8.0",
     "eslint-plugin-boundaries": "^7.1.0",
@@ -36,7 +40,8 @@
     "husky": "^9.1.7",
     "lint-staged": "^17.3.0",
     "secretlint": "^13.0.4",
-    "typescript-eslint": "^8.65.0"
+    "typescript-eslint": "^8.65.0",
+    "vitest": "^4.1.10"
   },
   "lint-staged": {
     "*.{js,ts,svelte,astro}": "eslint --fix",
