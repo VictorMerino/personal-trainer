@@ -1,3 +1,16 @@
+## Git workflow
+
+Per PR (one PR per feature-spec scenario group, per `docs/adr/0013-build-plan.md`):
+
+1. Create a new branch from `main`.
+2. Commit the changes on that branch.
+3. Push the branch.
+4. Give the user a link to open the PR — do not open the PR yourself.
+5. The user creates the PR and reviews it.
+
+Never commit directly to `main`, and never open the PR itself — that step is
+always the user's.
+
 ## Development
 
 When starting the dev server, use background mode:
