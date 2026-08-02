@@ -625,7 +625,11 @@ works — which is precisely the thesis.
     quota/planner involved, quota exceedance invisible to the client, `REST`
     recorded as a zero-exercise plan excluded from adherence). See
     `docs/adr/0011-endpoint-contracts.md` and `docs/features/endpoint-contracts.md`.
-11. **Test strategy per layer.**
+11. ~~Test strategy per layer~~ — **designed** (property tests + example
+    tables for domain, recorded real-response fixtures for LLM adapters
+    with manual/scheduled live smoke tests, Supabase JS client integration
+    tests for RLS, golden-path + CHOICE-branch E2E). See
+    `docs/adr/0012-test-strategy.md` and `docs/features/test-strategy.md`.
 12. **Build plan** — weekly ordering and what gets delegated to the agent in each phase.
 
 ---
