@@ -76,4 +76,14 @@ describe('buildSetsForExercise', () => {
     expect(sets).toHaveLength(NORMAL_SET_COUNT);
     expect(sets.every((s) => s.rpeTarget === NORMAL_RPE_TARGET)).toBe(true);
   });
+
+  it('applies a per-exercise RPE cap below the session RPE target when lower', () => {
+    const sets = buildSetsForExercise(exercise(), 'hypertrophy', 'NORMAL', new Map(), 6);
+    expect(sets.every((s) => s.rpeTarget === 6)).toBe(true);
+  });
+
+  it('ignores a per-exercise RPE cap that is higher than the session RPE target', () => {
+    const sets = buildSetsForExercise(exercise(), 'hypertrophy', 'DELOAD', new Map(), 9);
+    expect(sets.every((s) => s.rpeTarget === DELOAD_RPE_TARGET)).toBe(true);
+  });
 });

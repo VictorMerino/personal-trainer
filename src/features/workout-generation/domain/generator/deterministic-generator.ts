@@ -20,6 +20,9 @@ export interface DeterministicGeneratorInput {
   readonly effectiveLimitations: readonly Limitation[];
   readonly lastUsedByExerciseId: ReadonlyMap<string, Date>;
   readonly currentLoadKgByExerciseId: ReadonlyMap<string, number>;
+  // Per-exercise RPE cap from progression (stall-backoff or reintroduction,
+  // ADR-0004) — optional, since most exercises carry no active cap.
+  readonly rpeTargetCapByExerciseId?: ReadonlyMap<string, number>;
 }
 
 const ACTIVE_RECOVERY_PATTERN = 'locomotion';
@@ -74,7 +77,13 @@ function buildTrainingPlan(input: DeterministicGeneratorInput, mode: 'NORMAL' | 
     .filter((exercise): exercise is Exercise => exercise !== undefined)
     .map((exercise) => ({
       exerciseId: exercise.id,
-      sets: buildSetsForExercise(exercise, input.goal, mode, input.currentLoadKgByExerciseId),
+      sets: buildSetsForExercise(
+        exercise,
+        input.goal,
+        mode,
+        input.currentLoadKgByExerciseId,
+        input.rpeTargetCapByExerciseId?.get(exercise.id),
+      ),
     }));
 
   return {

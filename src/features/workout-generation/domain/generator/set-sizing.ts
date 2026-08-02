@@ -33,15 +33,20 @@ function buildSingleSet(
 
 // Goal sets the rep range; DELOAD caps RPE and drops one set with a floor —
 // it never changes which exercise was selected (ADR-0003 decision 3).
+// rpeTargetCap, when present, is a per-exercise cap from progression
+// (stall-backoff or reintroduction, ADR-0004) — independent of the
+// session-level mode, so the two compose by taking the lower RPE.
 export function buildSetsForExercise(
   exercise: Exercise,
   goal: Goal,
   mode: SizingMode,
   currentLoadKgByExerciseId: ReadonlyMap<string, number>,
+  rpeTargetCap?: number,
 ): SetTarget[] {
   const setCount =
     mode === 'DELOAD' ? Math.max(NORMAL_SET_COUNT - 1, DELOAD_SET_COUNT_FLOOR) : NORMAL_SET_COUNT;
-  const rpeTarget = mode === 'DELOAD' ? DELOAD_RPE_TARGET : NORMAL_RPE_TARGET;
+  const sessionRpeTarget = mode === 'DELOAD' ? DELOAD_RPE_TARGET : NORMAL_RPE_TARGET;
+  const rpeTarget = rpeTargetCap === undefined ? sessionRpeTarget : Math.min(sessionRpeTarget, rpeTargetCap);
 
   return Array.from({ length: setCount }, () =>
     buildSingleSet(exercise, goal, rpeTarget, currentLoadKgByExerciseId),
