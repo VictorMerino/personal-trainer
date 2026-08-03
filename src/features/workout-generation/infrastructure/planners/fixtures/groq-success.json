@@ -1,0 +1,21 @@
+{
+  "id": "chatcmpl-f51b2cd2-bef7-417e-964e-a08f0b513c22",
+  "object": "chat.completion",
+  "created": 1730241104,
+  "model": "llama-3.3-70b-versatile",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\"mode\":\"NORMAL\",\"blocks\":[{\"role\":\"main\",\"exercises\":[{\"exerciseId\":\"back-squat\",\"sets\":[{\"kind\":\"load\",\"reps\":{\"min\":6,\"max\":8},\"loadKg\":60,\"rpeTarget\":7}]}]}]}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 420,
+    "completion_tokens": 96,
+    "total_tokens": 516
+  }
+}
