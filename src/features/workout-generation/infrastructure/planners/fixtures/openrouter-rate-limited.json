@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": 429,
+    "message": "Rate limit exceeded: free-tier limit is 20 requests per minute for this model."
+  }
+}
