@@ -1,0 +1,33 @@
+{
+  "id": "chatcmpl-efbef317-3e73-4437-a4d4-122506fffc90",
+  "object": "chat.completion",
+  "created": 1785784290,
+  "model": "llama-3.3-70b-versatile",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"mode\": \"NORMAL\",\n   \"blocks\": [\n       {\n           \"role\": \"warmup\",\n           \"exercises\": [\n               {\n                   \"exerciseId\": \"back-squat\",\n                   \"sets\": [\n                       {\n                           \"kind\": \"reps\",\n                           \"reps\": {\n                               \"min\": 8,\n                               \"max\": 12\n                           },\n                           \"rpeTarget\": 5\n                       }\n                   ]\n               }\n           ]\n       },\n       {\n           \"role\": \"main\",\n           \"exercises\": [\n               {\n                   \"exerciseId\": \"back-squat\",\n                   \"sets\": [\n                       {\n                           \"kind\": \"load\",\n                           \"reps\": {\n                               \"min\": 8,\n                               \"max\": 12\n                           },\n                           \"loadKg\": 60,\n                           \"rpeTarget\": 7\n                       },\n                       {\n                           \"kind\": \"load\",\n                           \"reps\": {\n                               \"min\": 8,\n                               \"max\": 12\n                           },\n                           \"loadKg\": 65,\n                           \"rpeTarget\": 8\n                       }\n                   ]\n               }\n           ]\n       },\n       {\n           \"role\": \"accessory\",\n           \"exercises\": [\n               {\n                   \"exerciseId\": \"bench-press\",\n                   \"sets\": [\n                       {\n                           \"kind\": \"reps\",\n                           \"reps\": {\n                               \"min\": 10,\n                               \"max\": 15\n                           },\n                           \"rpeTarget\": 7\n                       },\n                       {\n                           \"kind\": \"reps\",\n                           \"reps\": {\n                               \"min\": 10,\n                               \"max\": 15\n                           },\n                           \"rpeTarget\": 8\n                       }\n                   ]\n               }\n           ]\n       },\n       {\n           \"role\": \"cooldown\",\n           \"exercises\": [\n               {\n                   \"exerciseId\": \"back-squat\",\n                   \"sets\": [\n                       {\n                           \"kind\": \"time\",\n                           \"seconds\": 60,\n                           \"rpeTarget\": 3\n                       }\n                   ]\n               }\n           ]\n       }\n   ]\n}"
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "queue_time": 0.051993816,
+    "prompt_tokens": 516,
+    "prompt_time": 0.140112677,
+    "completion_tokens": 436,
+    "completion_time": 0.830429792,
+    "total_tokens": 952,
+    "total_time": 0.970542469
+  },
+  "usage_breakdown": null,
+  "system_fingerprint": "fp_ba38bbab80",
+  "x_groq": {
+    "id": "req_01kz4gkj7gem1vx5b97j6q0rm5",
+    "seed": 878151403
+  },
+  "service_tier": "on_demand"
+}
