@@ -1,0 +1,54 @@
+{
+  "id": "gen-1785788540-rzj5CbxkbTJ4Ve0r70AZ",
+  "object": "chat.completion",
+  "created": 1785788540,
+  "model": "openai/gpt-oss-20b:free",
+  "provider": "Darkbloom",
+  "system_fingerprint": null,
+  "service_tier": null,
+  "choices": [
+    {
+      "index": 0,
+      "logprobs": null,
+      "finish_reason": "length",
+      "native_finish_reason": "length",
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "reasoning": "We need to produce JSON with mode NORMAL. Blocks: warmup, main, accessory, cooldown. Must use only permitted exercises: back-squat, bench-press. We have ",
+        "reasoning_details": [
+          {
+            "type": "reasoning.text",
+            "text": "We need to produce JSON with mode NORMAL. Blocks: warmup, main, accessory, cooldown. Must use only permitted exercises: back-squat, bench-press. We have ",
+            "format": "unknown",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 542,
+    "completion_tokens": 40,
+    "total_tokens": 582,
+    "cost": 0,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.000010659,
+      "upstream_inference_prompt_cost": 0.000007859,
+      "upstream_inference_completions_cost": 0.0000028
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 37,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  }
+}
