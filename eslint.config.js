@@ -60,5 +60,13 @@ export default tseslint.config(
     languageOptions: {
       parserOptions: { parser: tseslint.parser },
     },
+  },
+  {
+    // Standalone Node scripts (e.g. manual fixture capture) — not part of
+    // the app bundle, so they run under plain Node globals, not DOM/Astro's.
+    files: ['scripts/**'],
+    languageOptions: {
+      globals: { process: 'readonly', console: 'readonly', fetch: 'readonly' },
+    },
   }
 );

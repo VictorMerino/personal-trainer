@@ -8,9 +8,11 @@ import groqSuccess from './fixtures/groq-success.json';
 import groqMalformedJson from './fixtures/groq-malformed-json.json';
 import groqRateLimited from './fixtures/groq-rate-limited.json';
 
-// Hand-written placeholders, not real provider captures — no GROQ_API_KEY is
-// available in this environment. ADR-0012 decision 2 wants real recordings;
-// swapping these for a real capture is tracked as a follow-up, not done here.
+// groq-success.json / groq-malformed-json.json are real recorded Groq
+// responses (ADR-0012 decision 2), captured via scripts/capture-groq-fixtures.mjs.
+// groq-rate-limited.json remains hand-written from Groq's documented error
+// envelope shape — forcing a real 429 would burn free-tier quota on every
+// recapture, and there's no documented shape difference to verify.
 
 function exercise(overrides: Partial<Exercise> = {}): Exercise {
   return {
@@ -34,6 +36,15 @@ function exercise(overrides: Partial<Exercise> = {}): Exercise {
   };
 }
 
+function benchPress(): Exercise {
+  return exercise({
+    id: 'bench-press',
+    name: 'Bench Press',
+    pattern: 'horizontal-push',
+    equipment: ['barbell', 'bench'],
+  });
+}
+
 const EMPTY_PATTERN_SUMMARY: PerPatternSummary = { daysSinceTrained: null, recentMeanRpe: null, volume: 0 };
 
 function historySummary(): PlanRequest['historySummary'] {
@@ -51,7 +62,7 @@ function request(overrides: Partial<PlanRequest> = {}): PlanRequest {
     availableMinutes: 45,
     equipmentContext: 'gym',
     effectiveLimitations: [],
-    catalog: [exercise()],
+    catalog: [exercise(), benchPress()],
     historySummary: historySummary(),
     ...overrides,
   };
@@ -77,13 +88,38 @@ describe('GroqPlanner', () => {
         mode: 'NORMAL',
         blocks: [
           {
+            role: 'warmup',
+            exercises: [
+              { exerciseId: 'back-squat', sets: [{ kind: 'reps', reps: { min: 8, max: 12 }, rpeTarget: 5 }] },
+            ],
+          },
+          {
             role: 'main',
             exercises: [
               {
                 exerciseId: 'back-squat',
-                sets: [{ kind: 'load', reps: { min: 6, max: 8 }, loadKg: 60, rpeTarget: 7 }],
+                sets: [
+                  { kind: 'load', reps: { min: 8, max: 12 }, loadKg: 60, rpeTarget: 7 },
+                  { kind: 'load', reps: { min: 8, max: 12 }, loadKg: 65, rpeTarget: 8 },
+                ],
               },
             ],
+          },
+          {
+            role: 'accessory',
+            exercises: [
+              {
+                exerciseId: 'bench-press',
+                sets: [
+                  { kind: 'reps', reps: { min: 10, max: 15 }, rpeTarget: 7 },
+                  { kind: 'reps', reps: { min: 10, max: 15 }, rpeTarget: 8 },
+                ],
+              },
+            ],
+          },
+          {
+            role: 'cooldown',
+            exercises: [{ exerciseId: 'back-squat', sets: [{ kind: 'time', seconds: 60, rpeTarget: 3 }] }],
           },
         ],
         generatedBy: 'groq',
@@ -105,11 +141,21 @@ describe('GroqPlanner', () => {
     if (!result.ok) expect(result.error.kind).toBe('rate-limited');
   });
 
-  it('maps a truncated (invalid JSON) completion to an invalid-response failure', async () => {
+  it('maps a token-truncated json_object failure (real Groq behavior: HTTP 400, not a 200 with bad content) to invalid-response', async () => {
     const planner = new GroqPlanner({
       apiKey: 'test-key',
-      fetchImpl: fetchReturning(jsonResponse(groqMalformedJson)),
+      fetchImpl: fetchReturning(jsonResponse(groqMalformedJson, 400)),
     });
+
+    const result = await planner.tryGenerate(request());
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error.kind).toBe('invalid-response');
+  });
+
+  it('maps a 200 response whose content is not valid JSON to invalid-response (defensive: not observed from real Groq, which errors at HTTP level instead)', async () => {
+    const notJson = { ...groqSuccess, choices: [{ ...groqSuccess.choices[0], message: { role: 'assistant', content: '{not valid json' } }] };
+    const planner = new GroqPlanner({ apiKey: 'test-key', fetchImpl: fetchReturning(jsonResponse(notJson)) });
 
     const result = await planner.tryGenerate(request());
 
