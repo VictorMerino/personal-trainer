@@ -439,6 +439,19 @@ video.
   continues, rather than propagating it as an error.
 - Available Groq models and their current limits change often — **confirm against
   their docs at implementation time**, do not trust anything written here.
+- **OpenRouter free-model selection (2026-08-03):** the model originally picked at
+  design time, `meta-llama/llama-3.3-70b-instruct:free`, was retired by OpenRouter
+  (404 at implementation time). Replaced with `openai/gpt-oss-20b:free`, chosen
+  empirically — ran it against the real prompt via
+  `scripts/capture-openrouter-fixtures.mjs` and confirmed it returns valid,
+  schema-conforming JSON, rather than picking from specs alone. It's a *reasoning*
+  model: it spends a large, variable number of tokens on an internal `reasoning`
+  field before emitting the JSON `content`. Two consequences: (1) a `max_tokens`
+  cutoff tight enough to truncate mid-reasoning returns `content: null` rather than
+  a partial JSON string, unlike Groq's non-reasoning models — see
+  `openrouter-null-content.json`; (2) as with Groq, re-confirm this model is still
+  live and still free before reusing it, free-tier model availability on
+  OpenRouter changes often.
 
 ### What the LLM sees
 
