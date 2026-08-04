@@ -41,10 +41,14 @@ export class SupabaseWorkoutRepository implements WorkoutRepository {
   }
 
   async getPlan(userId: string, planId: string): Promise<RepositoryResult<StoredWorkoutPlan>> {
+    // Filtered by user_id here too, not just RLS — a service-role client
+    // (e.g. scripts/seed-demo-data.ts) bypasses RLS entirely, so this
+    // repository must not rely on it alone to keep getPlan user-scoped.
     const { data, error } = await this.client
       .from('workout_plans')
       .select('id, user_id, date, plan')
       .eq('id', planId)
+      .eq('user_id', userId)
       .maybeSingle();
 
     if (error) return fail('db-error', error.message);

@@ -67,12 +67,29 @@ describe('SupabaseWorkoutRepository', () => {
   describe('getPlan', () => {
     it('reports not-found when no row matches', async () => {
       const maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
-      const eq = vi.fn(() => ({ maybeSingle }));
-      const repo = new SupabaseWorkoutRepository(fakeClient({ select: vi.fn(() => ({ eq })) }));
+      const eqChain: { eq: (...args: unknown[]) => typeof eqChain; maybeSingle: typeof maybeSingle } = {
+        eq: vi.fn(() => eqChain),
+        maybeSingle,
+      };
+      const repo = new SupabaseWorkoutRepository(fakeClient({ select: vi.fn(() => eqChain) }));
 
       const result = await repo.getPlan('user-1', 'missing');
 
       expect(result).toEqual({ ok: false, error: { kind: 'not-found', message: expect.any(String) } });
+    });
+
+    it('scopes the read to both the plan id and the calling user, not RLS alone', async () => {
+      const maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
+      const eqChain: { eq: (...args: unknown[]) => typeof eqChain; maybeSingle: typeof maybeSingle } = {
+        eq: vi.fn(() => eqChain),
+        maybeSingle,
+      };
+      const repo = new SupabaseWorkoutRepository(fakeClient({ select: vi.fn(() => eqChain) }));
+
+      await repo.getPlan('user-1', 'plan-1');
+
+      expect(eqChain.eq).toHaveBeenCalledWith('id', 'plan-1');
+      expect(eqChain.eq).toHaveBeenCalledWith('user_id', 'user-1');
     });
   });
 
