@@ -1,0 +1,5 @@
+branch=$(git rev-parse --abbrev-ref HEAD)
+if [ "$branch" = "main" ]; then
+  echo "Direct merges into main are not allowed — merge via a reviewed GitHub PR instead (see CLAUDE.md git workflow)."
+  exit 1
+fi
