@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { getAccessToken } from '../../../../shared/supabase/browser-client';
+  import { authorizedFetch } from '../../../../shared/http/authorized-fetch';
   import type { BodyZone } from '../../domain/exercise/exercise.schema';
   import type { EquipmentContext } from '../../domain/readiness/daily-checkin.schema';
   import type { LimitationSeverity } from '../../domain/limitation.schema';
@@ -35,14 +35,6 @@
   let loading = $state(true);
   let saving = $state(false);
   let errorMessage = $state<string | null>(null);
-
-  async function authorizedFetch(input: string, init: RequestInit = {}) {
-    const token = await getAccessToken();
-    return fetch(input, {
-      ...init,
-      headers: { ...init.headers, Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    });
-  }
 
   onMount(async () => {
     const response = await authorizedFetch('/api/profile');
