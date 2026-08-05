@@ -227,7 +227,9 @@ async function seed(admin: SupabaseClient, userId: string): Promise<void> {
     const decision = decideTrainingMode(checkIn);
     // CHOICE only arises on low-energy/low-time days: demo data always
     // takes the active-recovery branch rather than the "no plan" REST one.
-    const mode = decision.kind === 'CHOICE' ? 'ACTIVE_RECOVERY' : decision.kind;
+    // decideTrainingMode itself never returns REST (only CHOICE resolution
+    // does, ADR-0011) — the branch below is exhaustive in practice.
+    const mode = decision.kind === 'CHOICE' || decision.kind === 'REST' ? 'ACTIVE_RECOVERY' : decision.kind;
     const effectiveLimitations = effectiveLimitationsForToday(profileLimitations, checkIn);
 
     const plan = generateDeterministicPlan({
