@@ -8,6 +8,7 @@ import type {
   StoredWorkoutPlan,
   WorkoutRepository,
 } from '../../domain/repository/workout-repository.port';
+import type { StopReason } from '../../domain/session/stop-reason.schema';
 import { SetLogRowSchema, WorkoutPlanRowSchema } from './supabase-row.schema';
 
 function fail<T>(kind: RepositoryError['kind'], message: string): RepositoryResult<T> {
@@ -17,6 +18,8 @@ function fail<T>(kind: RepositoryError['kind'], message: string): RepositoryResu
 function logValidationFailure(table: string, issues: unknown): void {
   console.warn('[repository] validation failure', { table, issues });
 }
+
+const WORKOUT_PLAN_SELECT = 'id, user_id, date, plan, ended_at';
 
 export class SupabaseWorkoutRepository implements WorkoutRepository {
   constructor(private readonly client: SupabaseClient) {}
@@ -33,7 +36,7 @@ export class SupabaseWorkoutRepository implements WorkoutRepository {
         prompt_version: plan.promptVersion,
         plan,
       })
-      .select('id, user_id, date, plan')
+      .select(WORKOUT_PLAN_SELECT)
       .single();
 
     if (error) return fail('db-error', error.message);
@@ -46,7 +49,7 @@ export class SupabaseWorkoutRepository implements WorkoutRepository {
     // repository must not rely on it alone to keep getPlan user-scoped.
     const { data, error } = await this.client
       .from('workout_plans')
-      .select('id, user_id, date, plan')
+      .select(WORKOUT_PLAN_SELECT)
       .eq('id', planId)
       .eq('user_id', userId)
       .maybeSingle();
@@ -63,20 +66,54 @@ export class SupabaseWorkoutRepository implements WorkoutRepository {
   }
 
   async logSet(userId: string, workoutPlanId: string, log: NewSetLog): Promise<RepositoryResult<void>> {
-    const { error } = await this.client.from('set_logs').insert({
-      user_id: userId,
-      workout_plan_id: workoutPlanId,
-      exercise_id: log.exerciseId,
-      movement_pattern: log.movementPattern,
-      set_index: log.setIndex,
-      actual_reps: log.actualReps,
-      actual_load_kg: log.actualLoadKg,
-      actual_seconds: log.actualSeconds,
-      actual_rpe: log.actualRpe,
-    });
+    const { error } = await this.client.from('set_logs').upsert(
+      {
+        user_id: userId,
+        workout_plan_id: workoutPlanId,
+        exercise_id: log.exerciseId,
+        movement_pattern: log.movementPattern,
+        set_index: log.setIndex,
+        actual_reps: log.actualReps,
+        actual_load_kg: log.actualLoadKg,
+        actual_seconds: log.actualSeconds,
+        actual_rpe: log.actualRpe,
+      },
+      { onConflict: 'workout_plan_id,exercise_id,set_index' },
+    );
 
     if (error) return fail('db-error', error.message);
     return { ok: true, value: undefined };
+  }
+
+  async skipExercise(
+    userId: string,
+    workoutPlanId: string,
+    exerciseId: string,
+    reason: StopReason | null,
+  ): Promise<RepositoryResult<void>> {
+    const owned = await this.getPlan(userId, workoutPlanId);
+    if (!owned.ok) return owned;
+
+    const { error } = await this.client
+      .from('skipped_exercises')
+      .upsert({ workout_plan_id: workoutPlanId, exercise_id: exerciseId, reason }, { onConflict: 'workout_plan_id,exercise_id' });
+
+    if (error) return fail('db-error', error.message);
+    return { ok: true, value: undefined };
+  }
+
+  async endSession(userId: string, workoutPlanId: string, reason: StopReason | null): Promise<RepositoryResult<StoredWorkoutPlan>> {
+    const { data, error } = await this.client
+      .from('workout_plans')
+      .update({ ended_at: new Date().toISOString(), ended_reason: reason })
+      .eq('id', workoutPlanId)
+      .eq('user_id', userId)
+      .select(WORKOUT_PLAN_SELECT)
+      .maybeSingle();
+
+    if (error) return fail('db-error', error.message);
+    if (!data) return fail('not-found', `No workout plan with id ${workoutPlanId}`);
+    return this.toStoredPlan(data);
   }
 
   async getRecentSetLogs(
@@ -86,11 +123,14 @@ export class SupabaseWorkoutRepository implements WorkoutRepository {
   ): Promise<RepositoryResult<readonly SetLogRecord[]>> {
     const windowStart = new Date(asOf.getTime() - windowDays * 24 * 60 * 60 * 1000);
 
+    // Only finalized sessions count (ADR-0009 consequences): an
+    // in-progress session's sets shouldn't be read as "trained" yet.
     const { data, error } = await this.client
       .from('set_logs')
-      .select('exercise_id, movement_pattern, workout_plan_id, logged_at, set_index, actual_rpe, actual_load_kg, workout_plans(plan)')
+      .select('exercise_id, movement_pattern, workout_plan_id, logged_at, set_index, actual_rpe, actual_load_kg, workout_plans!inner(plan, ended_at)')
       .eq('user_id', userId)
-      .gte('logged_at', windowStart.toISOString());
+      .gte('logged_at', windowStart.toISOString())
+      .not('workout_plans.ended_at', 'is', null);
 
     if (error) return fail('db-error', error.message);
 
@@ -118,7 +158,13 @@ export class SupabaseWorkoutRepository implements WorkoutRepository {
 
     return {
       ok: true,
-      value: { id: parsed.data.id, userId: parsed.data.user_id, date: parsed.data.date, plan: parsed.data.plan },
+      value: {
+        id: parsed.data.id,
+        userId: parsed.data.user_id,
+        date: parsed.data.date,
+        plan: parsed.data.plan,
+        endedAt: parsed.data.ended_at,
+      },
     };
   }
 }

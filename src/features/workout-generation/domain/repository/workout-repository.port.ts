@@ -1,12 +1,15 @@
 import type { MovementPattern } from '../exercise/exercise.schema';
 import type { WorkoutPlan } from '../workout-plan/workout-plan.schema';
 import type { SetLogRecord } from '../history/set-log-record.schema';
+import type { StopReason } from '../session/stop-reason.schema';
 
 export interface StoredWorkoutPlan {
   readonly id: string;
   readonly userId: string;
   readonly date: string;
   readonly plan: WorkoutPlan;
+  // null while in progress (ADR-0009 decision 2).
+  readonly endedAt: string | null;
 }
 
 export interface NewSetLog {
@@ -41,6 +44,14 @@ export interface WorkoutRepository {
   // set_logs cascades on delete at the DB level (migration
   // 20260804120000) — no separate cleanup call needed here.
   deletePlan(userId: string, planId: string): Promise<RepositoryResult<void>>;
+  // Upserts on (workout_plan_id, exercise_id, set_index) — autosave means
+  // the same set can be logged more than once, as a correction (ADR-0008
+  // decision 4), not a new row each time.
   logSet(userId: string, workoutPlanId: string, log: NewSetLog): Promise<RepositoryResult<void>>;
   getRecentSetLogs(userId: string, asOf: Date, windowDays: number): Promise<RepositoryResult<readonly SetLogRecord[]>>;
+  // Remaining unlogged sets for this exercise are not otherwise represented
+  // (ADR-0009 consequences: a skip is the absence of a row, made
+  // meaningful by this marker, not a SetLog row of its own).
+  skipExercise(userId: string, workoutPlanId: string, exerciseId: string, reason: StopReason | null): Promise<RepositoryResult<void>>;
+  endSession(userId: string, workoutPlanId: string, reason: StopReason | null): Promise<RepositoryResult<StoredWorkoutPlan>>;
 }
