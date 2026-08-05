@@ -1,0 +1,24 @@
+---
+import ChoiceScreen from '../../../features/workout-generation/ui/checkin/ChoiceScreen.svelte';
+
+const { id } = Astro.params;
+if (!id) return Astro.redirect('/checkin');
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>What's today?</title>
+  </head>
+  <body>
+    <ChoiceScreen client:load checkInId={id} />
+    <script>
+      import { getAccessToken } from '../../../shared/supabase/browser-client';
+
+      getAccessToken().then((token) => {
+        if (!token) window.location.href = '/login';
+      });
+    </script>
+  </body>
+</html>
