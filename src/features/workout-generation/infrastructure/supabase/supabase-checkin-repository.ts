@@ -66,6 +66,19 @@ export class SupabaseCheckInRepository implements CheckInRepository {
     return this.toStoredCheckIn(data);
   }
 
+  async getCheckInForDate(userId: string, date: string): Promise<RepositoryResult<StoredCheckIn>> {
+    const { data, error } = await this.client
+      .from('daily_checkins')
+      .select(CHECKIN_SELECT)
+      .eq('date', date)
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error) return fail('db-error', error.message);
+    if (!data) return fail('not-found', `No check-in for ${date}`);
+    return this.toStoredCheckIn(data);
+  }
+
   async resolveChoice(userId: string, checkInId: string, decision: TrainingDecision): Promise<RepositoryResult<StoredCheckIn>> {
     const { error } = await this.client
       .from('daily_checkins')

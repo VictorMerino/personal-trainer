@@ -40,3 +40,8 @@ export const ACTIVE_RECOVERY_RPE_TARGET = 3;
 // First-ever prescription of an exercise, before any progression history
 // exists (ADR-0004 tracks load changes from here, not a starting point).
 export const DEFAULT_STARTING_LOAD_KG = 20;
+
+// Per-user daily cap on LLM-backed generations (ADR-0007 decision 4,
+// ADR-0011 decision 3) — checked after the atomic DB increment; exceeding
+// it never errors, it just falls through to the deterministic generator.
+export const DAILY_GENERATION_LIMIT = 20;
