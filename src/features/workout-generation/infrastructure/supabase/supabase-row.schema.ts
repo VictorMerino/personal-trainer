@@ -9,6 +9,7 @@ export const WorkoutPlanRowSchema = z.object({
   user_id: z.string(),
   date: z.string(),
   plan: WorkoutPlanSchema,
+  ended_at: z.string().nullable(),
 });
 export type WorkoutPlanRow = z.infer<typeof WorkoutPlanRowSchema>;
 

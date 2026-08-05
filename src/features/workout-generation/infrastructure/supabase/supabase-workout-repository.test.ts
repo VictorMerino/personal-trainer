@@ -34,10 +34,16 @@ function fakeClient(overrides: Record<string, unknown>): SupabaseClient {
   return { from: vi.fn(() => overrides) } as unknown as SupabaseClient;
 }
 
+// Some methods (skipExercise) hit two different tables in one call —
+// this variant dispatches `from(table)` to a different builder per table.
+function fakeClientByTable(byTable: Record<string, unknown>): SupabaseClient {
+  return { from: vi.fn((table: string) => byTable[table]) } as unknown as SupabaseClient;
+}
+
 describe('SupabaseWorkoutRepository', () => {
   describe('savePlan', () => {
     it('returns the stored plan when the insert round-trips a valid row', async () => {
-      const row = { id: 'plan-1', user_id: 'user-1', date: '2026-08-04', plan: plan() };
+      const row = { id: 'plan-1', user_id: 'user-1', date: '2026-08-04', plan: plan(), ended_at: null };
       const single = vi.fn().mockResolvedValue({ data: row, error: null });
       const select = vi.fn(() => ({ single }));
       const insert = vi.fn(() => ({ select }));
@@ -48,7 +54,10 @@ describe('SupabaseWorkoutRepository', () => {
       expect(insert).toHaveBeenCalledWith(
         expect.objectContaining({ user_id: 'user-1', date: '2026-08-04', generated_by: 'deterministic' }),
       );
-      expect(result).toEqual({ ok: true, value: { id: 'plan-1', userId: 'user-1', date: '2026-08-04', plan: plan() } });
+      expect(result).toEqual({
+        ok: true,
+        value: { id: 'plan-1', userId: 'user-1', date: '2026-08-04', plan: plan(), endedAt: null },
+      });
     });
 
     it('fails validation when the round-tripped row does not match WorkoutPlanSchema', async () => {
@@ -120,7 +129,8 @@ describe('SupabaseWorkoutRepository', () => {
         actual_load_kg: 82.5,
         workout_plans: { plan: plan() },
       };
-      const gte = vi.fn().mockResolvedValue({ data: [row], error: null });
+      const not = vi.fn().mockResolvedValue({ data: [row], error: null });
+      const gte = vi.fn(() => ({ not }));
       const eq = vi.fn(() => ({ gte }));
       const repo = new SupabaseWorkoutRepository(fakeClient({ select: vi.fn(() => ({ eq })) }));
 
@@ -153,13 +163,103 @@ describe('SupabaseWorkoutRepository', () => {
         actual_load_kg: null,
         workout_plans: { plan: plan() },
       };
-      const gte = vi.fn().mockResolvedValue({ data: [row], error: null });
+      const not = vi.fn().mockResolvedValue({ data: [row], error: null });
+      const gte = vi.fn(() => ({ not }));
       const eq = vi.fn(() => ({ gte }));
       const repo = new SupabaseWorkoutRepository(fakeClient({ select: vi.fn(() => ({ eq })) }));
 
       const result = await repo.getRecentSetLogs('user-1', new Date('2026-08-04T00:00:00.000Z'), 14);
 
       expect(result).toEqual({ ok: true, value: [] });
+    });
+  });
+
+  describe('logSet', () => {
+    it('upserts on (workout_plan_id, exercise_id, set_index) so a re-logged set corrects, not duplicates', async () => {
+      const upsert = vi.fn().mockResolvedValue({ error: null });
+      const repo = new SupabaseWorkoutRepository(fakeClient({ upsert }));
+
+      const result = await repo.logSet('user-1', 'plan-1', {
+        exerciseId: 'back-squat',
+        movementPattern: 'knee-dominant',
+        setIndex: 0,
+        actualReps: 6,
+        actualLoadKg: 80,
+        actualSeconds: null,
+        actualRpe: 9,
+      });
+
+      expect(upsert).toHaveBeenCalledWith(
+        expect.objectContaining({ workout_plan_id: 'plan-1', exercise_id: 'back-squat', set_index: 0 }),
+        { onConflict: 'workout_plan_id,exercise_id,set_index' },
+      );
+      expect(result).toEqual({ ok: true, value: undefined });
+    });
+  });
+
+  describe('skipExercise', () => {
+    it('records a skip only after confirming the plan belongs to the caller', async () => {
+      const maybeSingle = vi.fn().mockResolvedValue({
+        data: { id: 'plan-1', user_id: 'user-1', date: '2026-08-04', plan: plan(), ended_at: null },
+        error: null,
+      });
+      const eqChain = { eq: vi.fn(() => eqChain), maybeSingle };
+      const upsert = vi.fn().mockResolvedValue({ error: null });
+      const repo = new SupabaseWorkoutRepository(
+        fakeClientByTable({
+          workout_plans: { select: vi.fn(() => eqChain) },
+          skipped_exercises: { upsert },
+        }),
+      );
+
+      const result = await repo.skipExercise('user-1', 'plan-1', 'back-squat', 'pain');
+
+      expect(upsert).toHaveBeenCalledWith(
+        { workout_plan_id: 'plan-1', exercise_id: 'back-squat', reason: 'pain' },
+        { onConflict: 'workout_plan_id,exercise_id' },
+      );
+      expect(result).toEqual({ ok: true, value: undefined });
+    });
+
+    it('reports not-found instead of touching skipped_exercises when the plan is not the caller\'s', async () => {
+      const maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
+      const eqChain = { eq: vi.fn(() => eqChain), maybeSingle };
+      const upsert = vi.fn();
+      const repo = new SupabaseWorkoutRepository(
+        fakeClientByTable({
+          workout_plans: { select: vi.fn(() => eqChain) },
+          skipped_exercises: { upsert },
+        }),
+      );
+
+      const result = await repo.skipExercise('user-1', 'plan-1', 'back-squat', null);
+
+      expect(upsert).not.toHaveBeenCalled();
+      expect(result).toEqual({ ok: false, error: { kind: 'not-found', message: expect.any(String) } });
+    });
+  });
+
+  describe('endSession', () => {
+    it('sets ended_at/ended_reason, scoped to the calling user', async () => {
+      const maybeSingle = vi.fn().mockResolvedValue({
+        data: { id: 'plan-1', user_id: 'user-1', date: '2026-08-04', plan: plan(), ended_at: '2026-08-04T12:00:00.000Z' },
+        error: null,
+      });
+      const select = vi.fn(() => ({ maybeSingle }));
+      const secondEq = vi.fn(() => ({ select }));
+      const firstEq = vi.fn(() => ({ eq: secondEq }));
+      const update = vi.fn(() => ({ eq: firstEq }));
+      const repo = new SupabaseWorkoutRepository(fakeClient({ update }));
+
+      const result = await repo.endSession('user-1', 'plan-1', 'time');
+
+      expect(update).toHaveBeenCalledWith(expect.objectContaining({ ended_reason: 'time' }));
+      expect(firstEq).toHaveBeenCalledWith('id', 'plan-1');
+      expect(secondEq).toHaveBeenCalledWith('user_id', 'user-1');
+      expect(result).toEqual({
+        ok: true,
+        value: { id: 'plan-1', userId: 'user-1', date: '2026-08-04', plan: plan(), endedAt: '2026-08-04T12:00:00.000Z' },
+      });
     });
   });
 });
