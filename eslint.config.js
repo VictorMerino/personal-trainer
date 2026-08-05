@@ -59,6 +59,7 @@ export default tseslint.config(
     files: ['**/*.svelte'],
     languageOptions: {
       parserOptions: { parser: tseslint.parser },
+      globals: { fetch: 'readonly', window: 'readonly', SubmitEvent: 'readonly', RequestInit: 'readonly' },
     },
   },
   {
