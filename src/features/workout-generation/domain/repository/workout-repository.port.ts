@@ -54,4 +54,9 @@ export interface WorkoutRepository {
   // meaningful by this marker, not a SetLog row of its own).
   skipExercise(userId: string, workoutPlanId: string, exerciseId: string, reason: StopReason | null): Promise<RepositoryResult<void>>;
   endSession(userId: string, workoutPlanId: string, reason: StopReason | null): Promise<RepositoryResult<StoredWorkoutPlan>>;
+  // ADR-0010: progress's adherence denominator needs every finalized
+  // plan's prescribed-set count in range, even one with zero logged sets
+  // at all (which getRecentSetLogs, joined from set_logs, would never
+  // surface on its own).
+  getFinalizedPlansInRange(userId: string, from: Date, to: Date): Promise<RepositoryResult<readonly WorkoutPlan[]>>;
 }
