@@ -1,9 +1,7 @@
 <script lang="ts">
-  export type ToastVariant = 'success' | 'error' | 'info';
-
   interface Props {
     message: string;
-    variant?: ToastVariant;
+    variant?: 'success' | 'error' | 'info';
   }
 
   const { message, variant = 'info' }: Props = $props();
