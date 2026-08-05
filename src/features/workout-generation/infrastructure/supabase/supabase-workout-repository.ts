@@ -149,6 +149,30 @@ export class SupabaseWorkoutRepository implements WorkoutRepository {
     return { ok: true, value: records };
   }
 
+  async getFinalizedPlansInRange(userId: string, from: Date, to: Date): Promise<RepositoryResult<readonly WorkoutPlan[]>> {
+    const { data, error } = await this.client
+      .from('workout_plans')
+      .select('plan')
+      .eq('user_id', userId)
+      .not('ended_at', 'is', null)
+      .gte('date', from.toISOString().slice(0, 10))
+      .lte('date', to.toISOString().slice(0, 10));
+
+    if (error) return fail('db-error', error.message);
+
+    const plans: WorkoutPlan[] = [];
+    for (const row of data ?? []) {
+      const parsed = WorkoutPlanSchema.safeParse((row as { plan: unknown }).plan);
+      if (!parsed.success) {
+        logValidationFailure('workout_plans', parsed.error.issues);
+        continue;
+      }
+      plans.push(parsed.data);
+    }
+
+    return { ok: true, value: plans };
+  }
+
   private toStoredPlan(row: unknown): RepositoryResult<StoredWorkoutPlan> {
     const parsed = WorkoutPlanRowSchema.safeParse(row);
     if (!parsed.success) {
