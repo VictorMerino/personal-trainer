@@ -32,14 +32,20 @@
   let errorMessage = $state<string | null>(null);
 
   onMount(async () => {
-    const result = await getProfile();
-    if (result.ok) {
-      goal = result.value.profile.goal;
-      level = result.value.profile.level;
-      defaultEquipmentContext = result.value.profile.defaultEquipmentContext;
-      limitations = [...result.value.limitations];
+    try {
+      const result = await getProfile();
+      if (result.ok) {
+        goal = result.value.profile.goal;
+        level = result.value.profile.level;
+        defaultEquipmentContext = result.value.profile.defaultEquipmentContext;
+        limitations = [...result.value.limitations];
+      }
+    } catch (err) {
+      console.error('[onboarding] failed to load profile', err);
+      errorMessage = 'Could not load your profile. Please try again.';
+    } finally {
+      loading = false;
     }
-    loading = false;
   });
 
   async function saveProfile() {

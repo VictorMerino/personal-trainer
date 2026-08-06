@@ -64,27 +64,33 @@
   }
 
   async function loadPlan() {
-    const result = await getWorkout(planId);
-    loading = false;
-    if (!result.ok) {
-      loadError = true;
-      return;
-    }
-    plan = result.value.plan;
-    alreadyEnded = Boolean(result.value.endedAt);
+    try {
+      const result = await getWorkout(planId);
+      loading = false;
+      if (!result.ok) {
+        loadError = true;
+        return;
+      }
+      plan = result.value.plan;
+      alreadyEnded = Boolean(result.value.endedAt);
 
-    exercises = plan.blocks.flatMap((block) =>
-      block.exercises.map((exercise): FlatExercise => {
-        const catalogEntry = EXERCISE_CATALOG.find((e) => e.id === exercise.exerciseId);
-        return {
-          exercise,
-          catalogName: catalogEntry?.name ?? exercise.exerciseId,
-          cues: catalogEntry?.cues ?? [],
-          restSeconds: catalogEntry?.defaultRestSeconds ?? 90,
-        };
-      }),
-    );
-    resetInputsForCurrentSet();
+      exercises = plan.blocks.flatMap((block) =>
+        block.exercises.map((exercise): FlatExercise => {
+          const catalogEntry = EXERCISE_CATALOG.find((e) => e.id === exercise.exerciseId);
+          return {
+            exercise,
+            catalogName: catalogEntry?.name ?? exercise.exerciseId,
+            cues: catalogEntry?.cues ?? [],
+            restSeconds: catalogEntry?.defaultRestSeconds ?? 90,
+          };
+        }),
+      );
+      resetInputsForCurrentSet();
+    } catch (err) {
+      console.error('[workout-session] failed to load plan', err);
+      loading = false;
+      loadError = true;
+    }
   }
 
   loadPlan();

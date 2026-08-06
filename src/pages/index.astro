@@ -14,11 +14,9 @@ import HomeView from '../features/workout-generation/ui/home/HomeView.svelte';
   <body>
     <HomeView client:load />
     <script>
-      import { getAccessToken } from '../shared/supabase/browser-client';
+      import { requireSignedIn } from '../shared/supabase/browser-client';
 
-      getAccessToken().then((token) => {
-        if (!token) window.location.href = '/login';
-      });
+      requireSignedIn();
     </script>
   </body>
 </html>

@@ -14,11 +14,9 @@ if (!id) return Astro.redirect('/checkin');
   <body>
     <ChoiceScreen client:load checkInId={id} />
     <script>
-      import { getAccessToken } from '../../../shared/supabase/browser-client';
+      import { requireSignedIn } from '../../../shared/supabase/browser-client';
 
-      getAccessToken().then((token) => {
-        if (!token) window.location.href = '/login';
-      });
+      requireSignedIn();
     </script>
   </body>
 </html>

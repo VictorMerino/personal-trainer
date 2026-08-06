@@ -14,13 +14,19 @@
   async function loadSnapshot() {
     loading = true;
     loadError = false;
-    const result = await getProgress(range);
-    loading = false;
-    if (!result.ok) {
+    try {
+      const result = await getProgress(range);
+      loading = false;
+      if (!result.ok) {
+        loadError = true;
+        return;
+      }
+      snapshot = result.value.snapshot;
+    } catch (err) {
+      console.error('[progress] failed to load snapshot', err);
+      loading = false;
       loadError = true;
-      return;
     }
-    snapshot = result.value.snapshot;
   }
 
   function selectRange(next: ProgressRange) {
