@@ -84,5 +84,5 @@ export const POST: APIRoute = async ({ request }) => {
   const saved = await workoutRepository.savePlan(userId, date, plan);
   if (!saved.ok) return jsonError(500, 'save-failed', 'Could not save generated plan.');
 
-  return jsonOk({ plan: saved.value.plan });
+  return jsonOk({ id: saved.value.id, plan: saved.value.plan });
 };
