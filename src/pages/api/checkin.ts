@@ -11,6 +11,26 @@ import { jsonError, jsonOk } from './_shared/api-error';
 
 export const prerender = false;
 
+export const GET: APIRoute = async ({ request }) => {
+  const auth = await requireUser(request, { url: import.meta.env.SUPABASE_URL, anonKey: import.meta.env.SUPABASE_ANON_KEY });
+  if (auth instanceof Response) return auth;
+  const { userId, supabase } = auth;
+
+  const date = new Date().toISOString().slice(0, 10);
+  const checkInRepository = new SupabaseCheckInRepository(supabase);
+  const checkIn = await checkInRepository.getCheckInForDate(userId, date);
+  if (!checkIn.ok) return jsonError(404, 'not-found', 'No check-in for today.');
+
+  let plan: { id: string; endedAt: string | null } | null = null;
+  if (checkIn.value.decision.kind === 'NORMAL' || checkIn.value.decision.kind === 'DELOAD') {
+    const workoutRepository = new SupabaseWorkoutRepository(supabase);
+    const planResult = await workoutRepository.getPlanForDate(userId, date);
+    if (planResult.ok) plan = { id: planResult.value.id, endedAt: planResult.value.endedAt };
+  }
+
+  return jsonOk({ checkInId: checkIn.value.id, decision: checkIn.value.decision, plan });
+};
+
 export const POST: APIRoute = async ({ request }) => {
   const auth = await requireUser(request, { url: import.meta.env.SUPABASE_URL, anonKey: import.meta.env.SUPABASE_ANON_KEY });
   if (auth instanceof Response) return auth;

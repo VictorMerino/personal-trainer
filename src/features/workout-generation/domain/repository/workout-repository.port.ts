@@ -41,6 +41,10 @@ export interface WorkoutRepository {
   // consequences: a plan valid under an older schema_version must be
   // caught, not silently misinterpreted).
   getPlan(userId: string, planId: string): Promise<RepositoryResult<StoredWorkoutPlan>>;
+  // Home-page routing needs "is there already a plan for today" without
+  // knowing its id — most recent plan wins on the (rare, unconstrained)
+  // case of more than one row for the same date.
+  getPlanForDate(userId: string, date: string): Promise<RepositoryResult<StoredWorkoutPlan>>;
   // set_logs cascades on delete at the DB level (migration
   // 20260804120000) — no separate cleanup call needed here.
   deletePlan(userId: string, planId: string): Promise<RepositoryResult<void>>;
