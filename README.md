@@ -1,45 +1,94 @@
-# Astro Starter Kit: Minimal
+# Personal-TrAIner
 
 [![CI](https://github.com/VictorMerino/personal-trainer/actions/workflows/ci.yml/badge.svg)](https://github.com/VictorMerino/personal-trainer/actions/workflows/ci.yml)
 
+Most fitness apps hand you a rigid plan and expect you to adapt to it. This
+one inverts that: **the plan adapts to you, every single day** — energy,
+pain, and available time all feed into what you get asked to do today, with
+an AI-generated (Groq → OpenRouter → deterministic fallback) workout behind
+a set of domain rules it cannot override, not a chat window that might.
+
+**The two-level guardrail:** at the product level, an LLM is constrained so
+it can't prescribe unsafe training (the pain/readiness policy is domain
+logic, not a prompt). At the process level, a coding agent was constrained
+so it couldn't write unreviewed code (branch-per-PR, human review on every
+merge, CI gates on lint/types/tests/boundaries/build). Same problem —
+trusting a non-deterministic system without letting it wreck things —
+solved twice, at two different layers. See `docs/ai-workflow.md` for how
+that worked in practice, including what went wrong.
+
+## Screenshots
+
+| Onboarding | Check-in | Gym logger | Progress |
+| --- | --- | --- | --- |
+| ![Onboarding](docs/screenshots/onboarding.png) | ![Check-in](docs/screenshots/checkin-result.png) | ![Gym logger](docs/screenshots/gym-logger.png) | ![Progress](docs/screenshots/progress.png) |
+
+## Quickstart
+
+Needs [pnpm](https://pnpm.io), [Docker](https://www.docker.com) (for local
+Supabase), and the [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started)
+(`npx supabase`, no separate install needed).
+
 ```sh
-pnpm create astro@latest -- --template minimal
+pnpm install
+npx supabase start        # local Postgres + Auth + PostgREST, migrations auto-applied
+cp .env.example .env      # fill in the SUPABASE_* values `supabase start` just printed
+pnpm dev                  # http://localhost:4321
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Public signup is disabled by design (this is a solo/demo project, not a
+public product) — create an account via the Supabase Studio UI
+(`http://127.0.0.1:54323` for local, or your Supabase project's dashboard)
+or `supabase.auth.admin.createUser` in a one-off script, then log in.
 
-## 🚀 Project Structure
+`pnpm db:seed -- --email=<your-account> [--reset]` backfills ~24 days of
+realistic history (varied RPE, an adherence gap, a scripted severe-pain
+day) by running the real domain logic day-by-day, useful for a populated
+progress view.
 
-Inside of your Astro project, you'll see the following folders and files:
+## Commands
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+| Command | Action |
+| --- | --- |
+| `pnpm dev` | Start the dev server at `localhost:4321` |
+| `pnpm build` | Production build to `./dist/` |
+| `pnpm test` | Unit/component tests (Vitest) |
+| `pnpm test:coverage` | Same, with coverage thresholds enforced |
+| `pnpm test:rls` | RLS cross-user isolation tests — needs `supabase start` first |
+| `pnpm test:e2e` | Playwright E2E specs — needs `supabase start` first |
+| `pnpm lint` | ESLint |
+| `pnpm typecheck` | `astro check` + `tsc --noEmit` |
+| `pnpm depcruise` | Architecture boundary checks (dependency-cruiser) |
+| `pnpm depcruise:graph` | Regenerate `docs/dependency-graph.svg` (needs Graphviz's `dot`) |
+| `pnpm db:seed` | Backfill realistic demo history for an account |
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Architecture
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- `src/features/workout-generation/domain/` — pure business logic (readiness
+  policy, deterministic generator, progression/autoregulation, exercise
+  catalog). 100% test coverage enforced, zero I/O, zero framework imports.
+- `src/features/workout-generation/infrastructure/` — Supabase repositories,
+  the Groq/OpenRouter planner adapters behind a fallback chain, prompt
+  construction.
+- `src/features/workout-generation/ui/` — Svelte components (one per
+  screen/flow), calling the backend only through `ui/api-client.ts`'s
+  typed functions, never raw `fetch`.
+- `src/pages/api/` — Astro API routes, thin: auth, validation, wiring
+  domain + infrastructure together.
+- `eslint-plugin-boundaries` + `dependency-cruiser` enforce the layer
+  direction (`domain` imports nothing from this project; `ui`/`pages` can
+  import `domain`/`infrastructure`/`shared`, never the reverse).
 
-Any static assets, like images, can be placed in the `public/` directory.
+`pnpm depcruise:graph` regenerates the dependency graph SVG from the
+current import graph — run it locally (needs Graphviz) after structural
+changes.
 
-## 🧞 Commands
+## Documentation
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- `docs/PROJECT-BRIEF.md` — the source of truth for what's being built and why.
+- `docs/adr/` — architecture decision records, one per significant design choice.
+- `docs/features/*.md` — BDD specs, written before each feature's implementation.
+- `docs/ai-workflow.md` — how the coding agent was used to build this, and
+  what actually went wrong along the way.
+- `AGENTS.md` — operating rules for the coding agent, including an
+  anti-patterns section grown from real corrections during the build.
