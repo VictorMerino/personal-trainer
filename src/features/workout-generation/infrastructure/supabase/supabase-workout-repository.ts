@@ -59,6 +59,21 @@ export class SupabaseWorkoutRepository implements WorkoutRepository {
     return this.toStoredPlan(data);
   }
 
+  async getPlanForDate(userId: string, date: string): Promise<RepositoryResult<StoredWorkoutPlan>> {
+    const { data, error } = await this.client
+      .from('workout_plans')
+      .select(WORKOUT_PLAN_SELECT)
+      .eq('date', date)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) return fail('db-error', error.message);
+    if (!data) return fail('not-found', `No workout plan for ${date}`);
+    return this.toStoredPlan(data);
+  }
+
   async deletePlan(userId: string, planId: string): Promise<RepositoryResult<void>> {
     const { error } = await this.client.from('workout_plans').delete().eq('id', planId).eq('user_id', userId);
     if (error) return fail('db-error', error.message);
