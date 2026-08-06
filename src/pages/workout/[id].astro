@@ -1,0 +1,24 @@
+---
+import WorkoutSession from '../../features/workout-generation/ui/logger/WorkoutSession.svelte';
+
+const { id } = Astro.params;
+if (!id) return Astro.redirect('/checkin');
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Today's workout</title>
+  </head>
+  <body>
+    <WorkoutSession client:load planId={id} />
+    <script>
+      import { getAccessToken } from '../../shared/supabase/browser-client';
+
+      getAccessToken().then((token) => {
+        if (!token) window.location.href = '/login';
+      });
+    </script>
+  </body>
+</html>

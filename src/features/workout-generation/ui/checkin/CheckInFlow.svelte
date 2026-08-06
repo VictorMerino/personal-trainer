@@ -74,12 +74,14 @@
 
     const response = await authorizedFetch('/api/workouts/generate', { method: 'POST' });
 
-    generating = false;
     if (!response.ok) {
+      generating = false;
       generateError = 'Could not generate a workout. Please try again.';
       return;
     }
     generateSucceeded = true;
+    const body = await response.json();
+    window.location.href = `/workout/${body.id}`;
   }
 
   function generateButtonLabel(): string {

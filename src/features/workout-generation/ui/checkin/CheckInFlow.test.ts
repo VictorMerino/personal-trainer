@@ -43,7 +43,7 @@ describe('CheckInFlow', () => {
     await screen.findByText(/normal session/);
   });
 
-  it('shows a generate-workout button for a NORMAL decision and disables it while generating', async () => {
+  it('shows a generate-workout button for a NORMAL decision, disables it while generating, and navigates to the logger on success', async () => {
     authorizedFetch.mockResolvedValueOnce(jsonResponse({ decision: { kind: 'NORMAL' }, checkInId: 'ci-1' }));
     let resolveGenerate: (v: unknown) => void = () => {};
     authorizedFetch.mockImplementationOnce(
@@ -53,6 +53,7 @@ describe('CheckInFlow', () => {
         }),
     );
     const user = userEvent.setup();
+    Object.defineProperty(window, 'location', { value: { href: '' }, writable: true });
     render(CheckInFlow);
 
     await completePainFreeSteps(user);
@@ -62,8 +63,8 @@ describe('CheckInFlow', () => {
     await user.click(generateButton);
 
     expect(generateButton).toBeDisabled();
-    resolveGenerate(jsonResponse({ plan: {} }));
-    await screen.findByRole('button', { name: 'Workout ready' });
+    resolveGenerate(jsonResponse({ id: 'plan-1', plan: {} }));
+    await vi.waitFor(() => expect(window.location.href).toBe('/workout/plan-1'));
   });
 
   it('shows an active-recovery confirmation with no generate button', async () => {
