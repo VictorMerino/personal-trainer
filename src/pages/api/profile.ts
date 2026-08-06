@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { z } from 'zod';
 import { UserProfileSchema } from '../../features/workout-generation/domain/profile/user-profile.schema';
 import { SupabaseProfileRepository } from '../../features/workout-generation/infrastructure/supabase/supabase-profile-repository';
 import { requireUser } from './_shared/require-user';
@@ -33,11 +34,14 @@ export const PUT: APIRoute = async ({ request }) => {
   const { userId, supabase } = auth;
 
   const body = await request.json().catch(() => null);
-  const parsedBody = UserProfileSchema.safeParse(body);
-  if (!parsedBody.success) return jsonError(400, 'invalid-body', 'Profile body failed validation.');
+  // docs/adr/0015-health-data-compliance.md: consent is the legal basis
+  // for processing this special-category data, not optional UI copy — a
+  // save without it is rejected, not silently accepted.
+  const parsedBody = UserProfileSchema.and(z.object({ consent: z.literal(true) })).safeParse(body);
+  if (!parsedBody.success) return jsonError(400, 'invalid-body', 'Profile body failed validation, or consent was not given.');
 
   const profileRepository = new SupabaseProfileRepository(supabase);
-  const result = await profileRepository.upsertProfile(userId, parsedBody.data);
+  const result = await profileRepository.upsertProfile(userId, parsedBody.data, parsedBody.data.consent);
   if (!result.ok) return jsonError(500, 'save-failed', 'Could not save profile.');
 
   return jsonOk({ profile: result.value });

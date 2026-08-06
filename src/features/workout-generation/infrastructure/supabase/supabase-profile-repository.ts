@@ -8,6 +8,7 @@ import type {
   LimitationStatus,
   ProfileRepository,
   StoredLimitation,
+  StoredProfile,
 } from '../../domain/repository/profile-repository.port';
 import type { RepositoryError, RepositoryResult } from '../../domain/repository/workout-repository.port';
 
@@ -27,6 +28,7 @@ const UserProfileRowSchema = z.object({
   goal: z.string(),
   level: z.string(),
   default_equipment_context: z.string(),
+  data_consent_at: z.string().nullable(),
 });
 
 const LimitationRowSchema = z.object({
@@ -48,10 +50,10 @@ function toStoredLimitation(row: z.infer<typeof LimitationRowSchema>): Repositor
 export class SupabaseProfileRepository implements ProfileRepository {
   constructor(private readonly client: SupabaseClient) {}
 
-  async getProfile(userId: string): Promise<RepositoryResult<UserProfile>> {
+  async getProfile(userId: string): Promise<RepositoryResult<StoredProfile>> {
     const { data, error } = await this.client
       .from('user_profiles')
-      .select('goal, level, default_equipment_context')
+      .select('goal, level, default_equipment_context, data_consent_at')
       .eq('user_id', userId)
       .maybeSingle();
 
@@ -60,14 +62,21 @@ export class SupabaseProfileRepository implements ProfileRepository {
     return this.toProfile(data);
   }
 
-  async upsertProfile(userId: string, profile: UserProfile): Promise<RepositoryResult<UserProfile>> {
+  async upsertProfile(userId: string, profile: UserProfile, consent: true): Promise<RepositoryResult<StoredProfile>> {
     const { data, error } = await this.client
       .from('user_profiles')
       .upsert(
-        { user_id: userId, goal: profile.goal, level: profile.level, default_equipment_context: profile.defaultEquipmentContext },
+        {
+          user_id: userId,
+          goal: profile.goal,
+          level: profile.level,
+          default_equipment_context: profile.defaultEquipmentContext,
+          // Re-affirmed on every save, not just the first (docs/adr/0015-health-data-compliance.md).
+          data_consent_at: consent && new Date().toISOString(),
+        },
         { onConflict: 'user_id' },
       )
-      .select('goal, level, default_equipment_context')
+      .select('goal, level, default_equipment_context, data_consent_at')
       .single();
 
     if (error) return fail(DB_ERROR, error.message);
@@ -124,7 +133,7 @@ export class SupabaseProfileRepository implements ProfileRepository {
     return toStoredLimitation(parsedRow.data);
   }
 
-  private toProfile(row: unknown): RepositoryResult<UserProfile> {
+  private toProfile(row: unknown): RepositoryResult<StoredProfile> {
     const parsedRow = UserProfileRowSchema.safeParse(row);
     if (!parsedRow.success) {
       logValidationFailure('user_profiles', parsedRow.error.issues);
@@ -140,6 +149,6 @@ export class SupabaseProfileRepository implements ProfileRepository {
       logValidationFailure('user_profiles', parsed.error.issues);
       return fail(VALIDATION_FAILED, 'Stored profile did not match UserProfileSchema');
     }
-    return { ok: true, value: parsed.data };
+    return { ok: true, value: { ...parsed.data, dataConsentedAt: parsedRow.data.data_consent_at } };
   }
 }

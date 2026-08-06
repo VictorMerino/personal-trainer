@@ -105,7 +105,12 @@ export interface StoredLimitation {
 }
 
 export interface ProfileResult {
-  readonly profile: { readonly goal: Goal; readonly level: ExperienceLevel; readonly defaultEquipmentContext: EquipmentContext };
+  readonly profile: {
+    readonly goal: Goal;
+    readonly level: ExperienceLevel;
+    readonly defaultEquipmentContext: EquipmentContext;
+    readonly dataConsentedAt: string | null;
+  };
   readonly limitations: readonly StoredLimitation[];
 }
 
@@ -117,6 +122,9 @@ export interface SaveProfileInput {
   readonly goal: Goal;
   readonly level: ExperienceLevel;
   readonly defaultEquipmentContext: EquipmentContext;
+  // Legal basis for processing this special-category data
+  // (docs/adr/0015-health-data-compliance.md) — required, not optional.
+  readonly consent: true;
 }
 
 export function saveProfile(input: SaveProfileInput): Promise<ApiResult<{ ok: true }>> {

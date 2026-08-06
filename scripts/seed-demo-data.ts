@@ -74,6 +74,7 @@ async function ensureProfile(admin: SupabaseClient, userId: string): Promise<Lim
     goal: DEMO_GOAL,
     level: 'intermediate',
     default_equipment_context: DEMO_EQUIPMENT,
+    data_consent_at: new Date().toISOString(),
   });
 
   // One standing, mild limitation — exercised through effectiveLimitationsForToday

@@ -19,7 +19,7 @@ describe('SupabaseProfileRepository', () => {
     });
 
     it('maps a stored row to UserProfile', async () => {
-      const row = { goal: 'strength', level: 'intermediate', default_equipment_context: 'gym' };
+      const row = { goal: 'strength', level: 'intermediate', default_equipment_context: 'gym', data_consent_at: '2026-08-08T00:00:00Z' };
       const maybeSingle = vi.fn().mockResolvedValue({ data: row, error: null });
       const eq = vi.fn(() => ({ maybeSingle }));
       const repo = new SupabaseProfileRepository(fakeClient({ select: vi.fn(() => ({ eq })) }));
@@ -28,28 +28,38 @@ describe('SupabaseProfileRepository', () => {
 
       expect(result).toEqual({
         ok: true,
-        value: { goal: 'strength', level: 'intermediate', defaultEquipmentContext: 'gym' },
+        value: { goal: 'strength', level: 'intermediate', defaultEquipmentContext: 'gym', dataConsentedAt: '2026-08-08T00:00:00Z' },
       });
     });
   });
 
   describe('upsertProfile', () => {
-    it('upserts on user_id and returns the round-tripped profile', async () => {
-      const row = { goal: 'hypertrophy', level: 'beginner', default_equipment_context: 'none' };
+    it('upserts on user_id, re-affirms consent, and returns the round-tripped profile', async () => {
+      const row = { goal: 'hypertrophy', level: 'beginner', default_equipment_context: 'none', data_consent_at: '2026-08-08T00:00:00Z' };
       const single = vi.fn().mockResolvedValue({ data: row, error: null });
       const select = vi.fn(() => ({ single }));
       const upsert = vi.fn(() => ({ select }));
       const repo = new SupabaseProfileRepository(fakeClient({ upsert }));
 
-      const result = await repo.upsertProfile('user-1', { goal: 'hypertrophy', level: 'beginner', defaultEquipmentContext: 'none' });
+      const result = await repo.upsertProfile(
+        'user-1',
+        { goal: 'hypertrophy', level: 'beginner', defaultEquipmentContext: 'none' },
+        true,
+      );
 
       expect(upsert).toHaveBeenCalledWith(
-        expect.objectContaining({ user_id: 'user-1', goal: 'hypertrophy', level: 'beginner', default_equipment_context: 'none' }),
+        expect.objectContaining({
+          user_id: 'user-1',
+          goal: 'hypertrophy',
+          level: 'beginner',
+          default_equipment_context: 'none',
+          data_consent_at: expect.any(String),
+        }),
         { onConflict: 'user_id' },
       );
       expect(result).toEqual({
         ok: true,
-        value: { goal: 'hypertrophy', level: 'beginner', defaultEquipmentContext: 'none' },
+        value: { goal: 'hypertrophy', level: 'beginner', defaultEquipmentContext: 'none', dataConsentedAt: '2026-08-08T00:00:00Z' },
       });
     });
   });
