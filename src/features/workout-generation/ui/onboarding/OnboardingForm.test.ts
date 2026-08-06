@@ -24,14 +24,14 @@ describe('OnboardingForm', () => {
     vi.unstubAllGlobals();
   });
 
-  it('lets the user pick goal, level and equipment, then saves the profile', async () => {
+  it('lets the user pick goal, level and equipment, then saves the profile and navigates to redirectTo', async () => {
     const fetchMock = vi.mocked(fetch);
     fetchMock.mockResolvedValueOnce(jsonResponse({ profile: null, limitations: [] }, false));
     fetchMock.mockResolvedValueOnce(jsonResponse({ profile: {} }));
 
-    const onsaved = vi.fn();
+    Object.defineProperty(window, 'location', { value: { href: '' }, writable: true });
     const user = userEvent.setup();
-    render(OnboardingForm, { onsaved });
+    render(OnboardingForm, { redirectTo: '/' });
 
     await screen.findByText('Goal');
 
@@ -47,21 +47,21 @@ describe('OnboardingForm', () => {
         body: JSON.stringify({ goal: 'strength', level: 'beginner', defaultEquipmentContext: 'basic' }),
       }),
     );
-    expect(onsaved).toHaveBeenCalled();
+    await vi.waitFor(() => expect(window.location.href).toBe('/'));
   });
 
   it('blocks saving until goal, level and equipment are all chosen', async () => {
     const fetchMock = vi.mocked(fetch);
     fetchMock.mockResolvedValueOnce(jsonResponse({ profile: null, limitations: [] }, false));
 
-    const onsaved = vi.fn();
+    Object.defineProperty(window, 'location', { value: { href: '' }, writable: true });
     const user = userEvent.setup();
-    render(OnboardingForm, { onsaved });
+    render(OnboardingForm, { redirectTo: '/' });
 
     await screen.findByText('Goal');
     await user.click(screen.getByRole('button', { name: 'Save profile' }));
 
     expect(screen.getByRole('alert')).toHaveTextContent('choose a goal');
-    expect(onsaved).not.toHaveBeenCalled();
+    expect(window.location.href).toBe('');
   });
 });

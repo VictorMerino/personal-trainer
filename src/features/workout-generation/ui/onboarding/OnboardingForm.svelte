@@ -10,10 +10,13 @@
   type Limitation = StoredLimitation;
 
   interface Props {
-    onsaved?: () => void;
+    // Not a callback: a function prop from a .astro template doesn't
+    // survive client:load's JSON serialization — see LoginForm.svelte's
+    // redirectTo prop for the same fix and why. String, not a callback.
+    redirectTo?: string;
   }
 
-  const { onsaved }: Props = $props();
+  const { redirectTo = '/' }: Props = $props();
 
   const goals: Goal[] = ['strength', 'hypertrophy', 'general_fitness'];
   const levels: ExperienceLevel[] = ['beginner', 'intermediate', 'advanced'];
@@ -63,7 +66,7 @@
       errorMessage = 'Could not save your profile. Please try again.';
       return;
     }
-    onsaved?.();
+    window.location.href = redirectTo;
   }
 
   async function addLimitation() {

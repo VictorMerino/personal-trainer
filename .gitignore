@@ -27,3 +27,8 @@ pnpm-debug.log*
 
 # local Supabase Studio SQL Editor autosaves
 supabase/snippets/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/

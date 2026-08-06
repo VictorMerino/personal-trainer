@@ -10,6 +10,6 @@ import LoginForm from '../features/workout-generation/ui/auth/LoginForm.svelte';
   </head>
   <body>
     <h1>Sign in</h1>
-    <LoginForm client:load onsignedin={() => (window.location.href = '/onboarding')} />
+    <LoginForm client:load redirectTo="/onboarding" />
   </body>
 </html>

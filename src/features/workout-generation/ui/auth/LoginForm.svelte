@@ -2,10 +2,18 @@
   import { getSupabaseBrowserClient } from '../../../../shared/supabase/browser-client';
 
   interface Props {
-    onsignedin?: () => void;
+    // A callback prop here would silently never fire: Astro serializes
+    // client:load island props to JSON to send them to the client, and a
+    // function passed from the .astro file's template doesn't survive that
+    // — this used to be `onsignedin={() => (window.location.href = '/onboarding')}`
+    // in login.astro, which never actually ran in the real app (only in
+    // component tests that instantiate this component directly, bypassing
+    // Astro's serialization boundary entirely). A string prop is
+    // serializable and the component navigates itself instead.
+    redirectTo?: string;
   }
 
-  const { onsignedin }: Props = $props();
+  const { redirectTo = '/' }: Props = $props();
 
   let email = $state('');
   let password = $state('');
@@ -23,7 +31,7 @@
         errorMessage = 'Could not sign in. Check your email and password.';
         return;
       }
-      onsignedin?.();
+      window.location.href = redirectTo;
     } catch (err) {
       console.error('[login] sign-in failed', err);
       errorMessage = 'Something went wrong signing you in. Please try again later.';
