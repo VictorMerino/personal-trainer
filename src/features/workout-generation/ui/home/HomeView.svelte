@@ -1,13 +1,6 @@
 <script lang="ts">
-  import { authorizedFetch } from '../../../../shared/http/authorized-fetch';
+  import { generateWorkout as generateWorkoutRequest, getTodayStatus, type TodayStatus } from '../api-client';
   import Skeleton from '../../../../shared/ui/Skeleton.svelte';
-  import type { TrainingDecision } from '../../domain/readiness/training-decision';
-
-  interface TodayStatus {
-    checkInId: string;
-    decision: TrainingDecision;
-    plan: { id: string; endedAt: string | null } | null;
-  }
 
   let loading = $state(true);
   let today = $state<TodayStatus | null>(null);
@@ -16,23 +9,21 @@
   let generateError = $state<string | null>(null);
 
   async function loadToday() {
-    const response = await authorizedFetch('/api/checkin', { method: 'GET' });
+    const result = await getTodayStatus();
     loading = false;
 
-    if (response.status === 404) {
-      window.location.href = '/checkin';
-      return;
-    }
-    if (!response.ok) {
+    if (!result.ok) {
+      if (result.status === 404) {
+        window.location.href = '/checkin';
+        return;
+      }
       loadError = true;
       return;
     }
 
-    const body = (await response.json()) as TodayStatus;
-    today = body;
-
-    if (body.decision.kind === 'CHOICE') {
-      window.location.href = `/checkin/${body.checkInId}/choice`;
+    today = result.value;
+    if (result.value.decision.kind === 'CHOICE') {
+      window.location.href = `/checkin/${result.value.checkInId}/choice`;
     }
   }
 
@@ -42,14 +33,13 @@
     generating = true;
     generateError = null;
 
-    const response = await authorizedFetch('/api/workouts/generate', { method: 'POST' });
-    if (!response.ok) {
+    const result = await generateWorkoutRequest();
+    if (!result.ok) {
       generating = false;
       generateError = 'Could not generate a workout. Please try again.';
       return;
     }
-    const body = await response.json();
-    window.location.href = `/workout/${body.id}`;
+    window.location.href = `/workout/${result.value.id}`;
   }
 </script>
 

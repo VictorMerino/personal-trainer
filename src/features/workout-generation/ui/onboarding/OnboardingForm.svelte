@@ -1,18 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { authorizedFetch } from '../../../../shared/http/authorized-fetch';
+  import { addLimitation as addLimitationRequest, getProfile, resolveLimitation as resolveLimitationRequest, saveProfile as saveProfileRequest, type StoredLimitation } from '../api-client';
   import type { BodyZone } from '../../domain/exercise/exercise.schema';
   import type { EquipmentContext } from '../../domain/readiness/daily-checkin.schema';
   import type { LimitationSeverity } from '../../domain/limitation.schema';
   import type { ExperienceLevel } from '../../domain/profile/user-profile.schema';
   import type { Goal } from '../../domain/generator/generator.constants';
 
-  interface Limitation {
-    id: string;
-    zone: BodyZone;
-    severity: LimitationSeverity;
-    isActive: boolean;
-  }
+  type Limitation = StoredLimitation;
 
   interface Props {
     onsaved?: () => void;
@@ -37,13 +32,12 @@
   let errorMessage = $state<string | null>(null);
 
   onMount(async () => {
-    const response = await authorizedFetch('/api/profile');
-    if (response.ok) {
-      const body = await response.json();
-      goal = body.profile.goal;
-      level = body.profile.level;
-      defaultEquipmentContext = body.profile.defaultEquipmentContext;
-      limitations = body.limitations;
+    const result = await getProfile();
+    if (result.ok) {
+      goal = result.value.profile.goal;
+      level = result.value.profile.level;
+      defaultEquipmentContext = result.value.profile.defaultEquipmentContext;
+      limitations = [...result.value.limitations];
     }
     loading = false;
   });
@@ -56,13 +50,10 @@
     saving = true;
     errorMessage = null;
 
-    const response = await authorizedFetch('/api/profile', {
-      method: 'PUT',
-      body: JSON.stringify({ goal, level, defaultEquipmentContext }),
-    });
+    const result = await saveProfileRequest({ goal, level, defaultEquipmentContext });
 
     saving = false;
-    if (!response.ok) {
+    if (!result.ok) {
       errorMessage = 'Could not save your profile. Please try again.';
       return;
     }
@@ -72,26 +63,19 @@
   async function addLimitation() {
     if (!newLimitationZone || !newLimitationSeverity) return;
 
-    const response = await authorizedFetch('/api/profile/limitations', {
-      method: 'POST',
-      body: JSON.stringify({ zone: newLimitationZone, severity: newLimitationSeverity }),
-    });
-    if (!response.ok) {
+    const result = await addLimitationRequest(newLimitationZone, newLimitationSeverity);
+    if (!result.ok) {
       errorMessage = 'Could not add that limitation.';
       return;
     }
-    const body = await response.json();
-    limitations = [...limitations, body.limitation];
+    limitations = [...limitations, result.value.limitation];
     newLimitationZone = null;
     newLimitationSeverity = null;
   }
 
   async function resolveLimitation(id: string) {
-    const response = await authorizedFetch(`/api/profile/limitations/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status: 'resolved' }),
-    });
-    if (!response.ok) {
+    const result = await resolveLimitationRequest(id);
+    if (!result.ok) {
       errorMessage = 'Could not update that limitation.';
       return;
     }

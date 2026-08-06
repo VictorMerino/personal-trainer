@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { authorizedFetch } from '../../../../shared/http/authorized-fetch';
+  import { getProgress } from '../api-client';
   import Skeleton from '../../../../shared/ui/Skeleton.svelte';
   import type { ProgressRange } from '../../domain/progress/progress-range';
   import type { ProgressSnapshot } from '../../domain/progress/progress-snapshot';
@@ -14,14 +14,13 @@
   async function loadSnapshot() {
     loading = true;
     loadError = false;
-    const response = await authorizedFetch(`/api/progress?range=${range}`, { method: 'GET' });
+    const result = await getProgress(range);
     loading = false;
-    if (!response.ok) {
+    if (!result.ok) {
       loadError = true;
       return;
     }
-    const body = await response.json();
-    snapshot = body.snapshot as ProgressSnapshot;
+    snapshot = result.value.snapshot;
   }
 
   function selectRange(next: ProgressRange) {

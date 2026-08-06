@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { authorizedFetch } from '../../../../shared/http/authorized-fetch';
+  import { endSession as endSessionRequest, getWorkout, logSet as logSetRequest, skipExercise as skipExerciseRequest } from '../api-client';
   import RpeBar from '../../../../shared/ui/RpeBar.svelte';
   import Skeleton from '../../../../shared/ui/Skeleton.svelte';
   import Toast from '../../../../shared/ui/Toast.svelte';
@@ -64,15 +64,14 @@
   }
 
   async function loadPlan() {
-    const response = await authorizedFetch(`/api/workouts/${planId}`, { method: 'GET' });
+    const result = await getWorkout(planId);
     loading = false;
-    if (!response.ok) {
+    if (!result.ok) {
       loadError = true;
       return;
     }
-    const body = await response.json();
-    plan = body.plan as WorkoutPlan;
-    alreadyEnded = Boolean(body.endedAt);
+    plan = result.value.plan;
+    alreadyEnded = Boolean(result.value.endedAt);
 
     exercises = plan.blocks.flatMap((block) =>
       block.exercises.map((exercise): FlatExercise => {
@@ -131,27 +130,29 @@
     saving = true;
     saveError = null;
 
-    const body: Record<string, unknown> = {
+    let actualReps: number | null = null;
+    let actualLoadKg: number | null = null;
+    let actualSeconds: number | null = null;
+    if (currentTarget.kind === 'load') {
+      actualReps = reps;
+      actualLoadKg = loadKg;
+    } else if (currentTarget.kind === 'reps') {
+      actualReps = reps;
+    } else {
+      actualSeconds = seconds;
+    }
+
+    const result = await logSetRequest(planId, {
       exerciseId: currentExercise.exercise.exerciseId,
       setIndex,
       actualRpe: rpe,
-      actualReps: null,
-      actualLoadKg: null,
-      actualSeconds: null,
-    };
-    if (currentTarget.kind === 'load') {
-      body.actualReps = reps;
-      body.actualLoadKg = loadKg;
-    } else if (currentTarget.kind === 'reps') {
-      body.actualReps = reps;
-    } else {
-      body.actualSeconds = seconds;
-    }
-
-    const response = await authorizedFetch(`/api/workouts/${planId}/sets`, { method: 'POST', body: JSON.stringify(body) });
+      actualReps,
+      actualLoadKg,
+      actualSeconds,
+    });
     saving = false;
 
-    if (!response.ok) {
+    if (!result.ok) {
       saveError = 'Could not save that set. Please try again.';
       return;
     }
@@ -165,10 +166,7 @@
   async function skipExercise() {
     if (!currentExercise) return;
     stopRestTimer();
-    await authorizedFetch(`/api/workouts/${planId}/skip-exercise`, {
-      method: 'POST',
-      body: JSON.stringify({ exerciseId: currentExercise.exercise.exerciseId, reason: null }),
-    });
+    await skipExerciseRequest(planId, currentExercise.exercise.exerciseId, null);
     exerciseIndex += 1;
     setIndex = 0;
     resetInputsForCurrentSet();
@@ -177,12 +175,9 @@
   async function endSession() {
     ending = true;
     stopRestTimer();
-    const response = await authorizedFetch(`/api/workouts/${planId}/end`, {
-      method: 'POST',
-      body: JSON.stringify({ reason: null }),
-    });
+    const result = await endSessionRequest(planId, null);
     ending = false;
-    if (response.ok) ended = true;
+    if (result.ok) ended = true;
   }
 </script>
 

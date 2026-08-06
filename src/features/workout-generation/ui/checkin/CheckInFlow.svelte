@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { authorizedFetch } from '../../../../shared/http/authorized-fetch';
+  import { generateWorkout as generateWorkoutRequest, submitCheckIn } from '../api-client';
   import type { EnergyLevel, EquipmentContext, PainReport } from '../../domain/readiness/daily-checkin.schema';
   import type { TrainingDecision } from '../../domain/readiness/training-decision';
   import PainStep from './PainStep.svelte';
@@ -41,25 +41,21 @@
     step = 'submitting';
     errorMessage = null;
 
-    const response = await authorizedFetch('/api/checkin', {
-      method: 'POST',
-      body: JSON.stringify({
-        energy,
-        painReports,
-        availableMinutes,
-        equipmentContext: context,
-      }),
+    const result = await submitCheckIn({
+      energy: energy!,
+      painReports,
+      availableMinutes: availableMinutes!,
+      equipmentContext: context,
     });
 
-    if (!response.ok) {
+    if (!result.ok) {
       errorMessage = 'Could not submit your check-in. Please try again.';
       step = 'equipment';
       return;
     }
 
-    const body = await response.json();
-    decision = body.decision;
-    checkInId = body.checkInId;
+    decision = result.value.decision;
+    checkInId = result.value.checkInId;
 
     if (decision?.kind === 'CHOICE') {
       window.location.href = `/checkin/${checkInId}/choice`;
@@ -72,16 +68,15 @@
     generating = true;
     generateError = null;
 
-    const response = await authorizedFetch('/api/workouts/generate', { method: 'POST' });
+    const result = await generateWorkoutRequest();
 
-    if (!response.ok) {
+    if (!result.ok) {
       generating = false;
       generateError = 'Could not generate a workout. Please try again.';
       return;
     }
     generateSucceeded = true;
-    const body = await response.json();
-    window.location.href = `/workout/${body.id}`;
+    window.location.href = `/workout/${result.value.id}`;
   }
 
   function generateButtonLabel(): string {
