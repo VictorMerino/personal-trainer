@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { authorizedFetch } from '../../../../shared/http/authorized-fetch';
+  import { resolveChoice } from '../api-client';
 
   interface Props {
     checkInId: string;
@@ -15,13 +15,10 @@
     submitting = true;
     errorMessage = null;
 
-    const response = await authorizedFetch(`/api/checkin/${checkInId}/choice`, {
-      method: 'POST',
-      body: JSON.stringify({ selection }),
-    });
+    const result = await resolveChoice(checkInId, selection);
 
     submitting = false;
-    if (!response.ok) {
+    if (!result.ok) {
       errorMessage = 'Could not save your choice. Please try again.';
       return;
     }
