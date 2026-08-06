@@ -72,5 +72,33 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
 
+  rls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: package.json
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      # No secrets needed (docs/adr/0012-test-strategy.md decision 3): a
+      # fresh local Supabase's anon/service-role keys are generated from
+      # this repo's own supabase/config.toml on a runner nobody else has
+      # network access to, not a shared credential.
+      - run: supabase start
+      - name: Export local Supabase credentials
+        run: |
+          STATUS=$(supabase status -o json)
+          echo "SUPABASE_URL=$(echo "$STATUS" | jq -r .API_URL)" >> "$GITHUB_ENV"
+          echo "SUPABASE_ANON_KEY=$(echo "$STATUS" | jq -r .ANON_KEY)" >> "$GITHUB_ENV"
+          echo "SUPABASE_SERVICE_ROLE_KEY=$(echo "$STATUS" | jq -r .SERVICE_ROLE_KEY)" >> "$GITHUB_ENV"
+      - run: pnpm run test:rls
+      - if: always()
+        run: supabase stop
+
   # E2E (Playwright, three flows per docs/PROJECT-BRIEF.md §9) lands here
   # once the UI-layer PRs exist to exercise.
