@@ -12,10 +12,19 @@ export interface StoredLimitation {
 
 export type LimitationStatus = 'active' | 'resolved';
 
+// docs/adr/0015-health-data-compliance.md: training/injury data is
+// GDPR Art. 9 special-category data — dataConsentedAt is the persisted
+// record of the explicit-consent legal basis, not just UI copy.
+export interface StoredProfile extends UserProfile {
+  readonly dataConsentedAt: string | null;
+}
+
 // Same Result-typed no-throw convention as WorkoutRepository/CheckInRepository.
 export interface ProfileRepository {
-  getProfile(userId: string): Promise<RepositoryResult<UserProfile>>;
-  upsertProfile(userId: string, profile: UserProfile): Promise<RepositoryResult<UserProfile>>;
+  getProfile(userId: string): Promise<RepositoryResult<StoredProfile>>;
+  // consent must be true to save — re-affirmed (dataConsentedAt refreshed)
+  // on every save, not just the first one.
+  upsertProfile(userId: string, profile: UserProfile, consent: true): Promise<RepositoryResult<StoredProfile>>;
   getLimitations(userId: string): Promise<RepositoryResult<readonly StoredLimitation[]>>;
   // Upserts on (user_id, zone) while status = 'active' (migration
   // 20260807090000) — adding a limitation for an already-limited zone

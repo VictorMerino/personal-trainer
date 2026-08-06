@@ -33,6 +33,7 @@
   let loading = $state(true);
   let saving = $state(false);
   let errorMessage = $state<string | null>(null);
+  let consentGiven = $state(false);
 
   onMount(async () => {
     try {
@@ -42,6 +43,7 @@
         level = result.value.profile.level;
         defaultEquipmentContext = result.value.profile.defaultEquipmentContext;
         limitations = [...result.value.limitations];
+        consentGiven = Boolean(result.value.profile.dataConsentedAt);
       }
     } catch (err) {
       console.error('[onboarding] failed to load profile', err);
@@ -56,10 +58,14 @@
       errorMessage = 'Please choose a goal, experience level, and default equipment.';
       return;
     }
+    if (!consentGiven) {
+      errorMessage = 'Please confirm the data consent notice below to continue.';
+      return;
+    }
     saving = true;
     errorMessage = null;
 
-    const result = await saveProfileRequest({ goal, level, defaultEquipmentContext });
+    const result = await saveProfileRequest({ goal, level, defaultEquipmentContext, consent: true });
 
     saving = false;
     if (!result.ok) {
@@ -166,7 +172,21 @@
     </button>
   </section>
 
-  <button type="button" disabled={saving} onclick={saveProfile}>{saving ? 'Saving…' : 'Save profile'}</button>
+  <section>
+    <h2>Before you continue</h2>
+    <p>
+      This app is not a medical service and does not provide medical advice. If you have pain, an
+      injury, or a medical condition, consult a qualified professional before training.
+    </p>
+    <label>
+      <input type="checkbox" bind:checked={consentGiven} />
+      I consent to my training and injury data being processed to generate and adjust my workouts.
+    </label>
+  </section>
+
+  <button type="button" disabled={saving || !consentGiven} onclick={saveProfile}>
+    {saving ? 'Saving…' : 'Save profile'}
+  </button>
   {#if errorMessage}
     <p role="alert">{errorMessage}</p>
   {/if}

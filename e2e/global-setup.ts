@@ -39,6 +39,7 @@ export default async function globalSetup(): Promise<void> {
       goal: TEST_PROFILE.goal,
       level: TEST_PROFILE.level,
       default_equipment_context: TEST_PROFILE.defaultEquipmentContext,
+      data_consent_at: new Date().toISOString(),
     });
     if (profileError) throw profileError;
 

@@ -38,13 +38,14 @@ describe('OnboardingForm', () => {
     await user.click(screen.getByRole('button', { name: 'strength' }));
     await user.click(screen.getByRole('button', { name: 'beginner' }));
     await user.click(screen.getByRole('button', { name: 'basic' }));
+    await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByRole('button', { name: 'Save profile' }));
 
     expect(fetchMock).toHaveBeenLastCalledWith(
       '/api/profile',
       expect.objectContaining({
         method: 'PUT',
-        body: JSON.stringify({ goal: 'strength', level: 'beginner', defaultEquipmentContext: 'basic' }),
+        body: JSON.stringify({ goal: 'strength', level: 'beginner', defaultEquipmentContext: 'basic', consent: true }),
       }),
     );
     await vi.waitFor(() => expect(window.location.href).toBe('/'));
@@ -59,9 +60,25 @@ describe('OnboardingForm', () => {
     render(OnboardingForm, { redirectTo: '/' });
 
     await screen.findByText('Goal');
+    await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByRole('button', { name: 'Save profile' }));
 
     expect(screen.getByRole('alert')).toHaveTextContent('choose a goal');
     expect(window.location.href).toBe('');
+  });
+
+  it('blocks saving until the data consent checkbox is checked', async () => {
+    const fetchMock = vi.mocked(fetch);
+    fetchMock.mockResolvedValueOnce(jsonResponse({ profile: null, limitations: [] }, false));
+
+    const user = userEvent.setup();
+    render(OnboardingForm, { redirectTo: '/' });
+
+    await screen.findByText('Goal');
+    await user.click(screen.getByRole('button', { name: 'strength' }));
+    await user.click(screen.getByRole('button', { name: 'beginner' }));
+    await user.click(screen.getByRole('button', { name: 'basic' }));
+
+    expect(screen.getByRole('button', { name: 'Save profile' })).toBeDisabled();
   });
 });
