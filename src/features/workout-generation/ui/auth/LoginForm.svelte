@@ -17,14 +17,19 @@
     submitting = true;
     errorMessage = null;
 
-    const { error } = await getSupabaseBrowserClient().auth.signInWithPassword({ email, password });
-
-    submitting = false;
-    if (error) {
-      errorMessage = 'Could not sign in. Check your email and password.';
-      return;
+    try {
+      const { error } = await getSupabaseBrowserClient().auth.signInWithPassword({ email, password });
+      if (error) {
+        errorMessage = 'Could not sign in. Check your email and password.';
+        return;
+      }
+      onsignedin?.();
+    } catch (err) {
+      console.error('[login] sign-in failed', err);
+      errorMessage = 'Something went wrong signing you in. Please try again later.';
+    } finally {
+      submitting = false;
     }
-    onsignedin?.();
   }
 </script>
 

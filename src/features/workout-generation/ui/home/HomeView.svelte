@@ -9,21 +9,27 @@
   let generateError = $state<string | null>(null);
 
   async function loadToday() {
-    const result = await getTodayStatus();
-    loading = false;
+    try {
+      const result = await getTodayStatus();
+      loading = false;
 
-    if (!result.ok) {
-      if (result.status === 404) {
-        window.location.href = '/checkin';
+      if (!result.ok) {
+        if (result.status === 404) {
+          window.location.href = '/checkin';
+          return;
+        }
+        loadError = true;
         return;
       }
-      loadError = true;
-      return;
-    }
 
-    today = result.value;
-    if (result.value.decision.kind === 'CHOICE') {
-      window.location.href = `/checkin/${result.value.checkInId}/choice`;
+      today = result.value;
+      if (result.value.decision.kind === 'CHOICE') {
+        window.location.href = `/checkin/${result.value.checkInId}/choice`;
+      }
+    } catch (err) {
+      console.error('[home] failed to load today\'s status', err);
+      loading = false;
+      loadError = true;
     }
   }
 

@@ -11,11 +11,9 @@ import ProgressView from '../features/workout-generation/ui/progress/ProgressVie
   <body>
     <ProgressView client:load />
     <script>
-      import { getAccessToken } from '../shared/supabase/browser-client';
+      import { requireSignedIn } from '../shared/supabase/browser-client';
 
-      getAccessToken().then((token) => {
-        if (!token) window.location.href = '/login';
-      });
+      requireSignedIn();
     </script>
   </body>
 </html>
