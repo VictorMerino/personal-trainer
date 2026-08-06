@@ -10,7 +10,7 @@ import OnboardingForm from '../features/workout-generation/ui/onboarding/Onboard
   </head>
   <body>
     <h1>Set up your profile</h1>
-    <OnboardingForm client:load onsaved={() => (window.location.href = '/')} />
+    <OnboardingForm client:load redirectTo="/" />
     <script>
       import { requireSignedIn } from '../shared/supabase/browser-client';
 
