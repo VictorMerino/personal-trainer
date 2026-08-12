@@ -38,28 +38,109 @@
 </script>
 
 {#if mode === 'ask'}
-  <div role="group" aria-label="Pain today">
-    <button type="button" onclick={() => oncomplete([])}>No pain today</button>
-    <button type="button" onclick={() => (mode = 'zones')}>I have pain</button>
+  <div class="stack" role="group" aria-label="Pain today">
+    <button type="button" class="big-btn" onclick={() => oncomplete([])}>No pain today</button>
+    <button type="button" class="big-btn secondary" onclick={() => (mode = 'zones')}>I have pain</button>
   </div>
 {:else}
-  <div role="group" aria-label="Which zones hurt">
+  <div class="chip-row" role="group" aria-label="Which zones hurt">
     {#each zones as zone (zone)}
-      <button type="button" class:selected={zoneLevels.has(zone)} onclick={() => toggleZone(zone)}>
+      <button type="button" class="chip" class:selected={zoneLevels.has(zone)} onclick={() => toggleZone(zone)}>
         {zone}
       </button>
     {/each}
   </div>
 
   {#each [...zoneLevels.keys()] as zone (zone)}
-    <div role="group" aria-label={`${zone} pain level`}>
-      {#each levels as level (level)}
-        <button type="button" class:selected={zoneLevels.get(zone) === level} onclick={() => setLevel(zone, level)}>
-          {level}
-        </button>
-      {/each}
+    <div class="zone-levels">
+      <p class="zone-label">{zone}</p>
+      <div class="chip-row" role="group" aria-label={`${zone} pain level`}>
+        {#each levels as level (level)}
+          <button
+            type="button"
+            class="chip"
+            class:selected={zoneLevels.get(zone) === level}
+            onclick={() => setLevel(zone, level)}
+          >
+            {level}
+          </button>
+        {/each}
+      </div>
     </div>
   {/each}
 
-  <button type="button" disabled={!allZonesHaveLevels} onclick={submitZones}>Continue</button>
+  <button type="button" class="big-btn" disabled={!allZonesHaveLevels} onclick={submitZones}>Continue</button>
 {/if}
+
+<style>
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .big-btn {
+    display: block;
+    width: 100%;
+    font-family: var(--font-ui);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--paper-raised);
+    background: var(--accent-strong);
+    border: none;
+    border-radius: var(--radius);
+    padding: var(--space-5) var(--space-4);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .big-btn.secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--line);
+  }
+
+  .big-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .chip {
+    font-family: var(--font-ui);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: var(--space-2) var(--space-4);
+    cursor: pointer;
+    text-transform: capitalize;
+  }
+
+  .chip.selected {
+    background: var(--accent);
+    color: var(--paper-raised);
+    border-color: var(--accent);
+  }
+
+  .zone-levels {
+    margin-bottom: var(--space-4);
+  }
+
+  .zone-label {
+    font-family: var(--font-data);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin: 0 0 var(--space-2);
+  }
+</style>

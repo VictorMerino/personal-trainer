@@ -3,8 +3,18 @@
   import type { EnergyLevel, EquipmentContext, PainReport } from '../../domain/readiness/daily-checkin.schema';
   import type { TrainingDecision } from '../../domain/readiness/training-decision';
   import PainStep from './PainStep.svelte';
+  import Skeleton from '../../../../shared/ui/Skeleton.svelte';
 
   type Step = 'energy' | 'pain' | 'minutes' | 'equipment' | 'submitting' | 'result';
+
+  const stepNumbers: Record<Step, number> = {
+    energy: 1,
+    pain: 2,
+    minutes: 3,
+    equipment: 4,
+    submitting: 4,
+    result: 4,
+  };
 
   const energyLevels: EnergyLevel[] = ['low', 'medium', 'high'];
   const minutesOptions = [15, 30, 45, 60, 90];
@@ -86,11 +96,15 @@
   }
 </script>
 
+{#if step !== 'submitting' && step !== 'result'}
+  <p class="eyebrow">Step {stepNumbers[step]} of 4</p>
+{/if}
+
 {#if step === 'energy'}
   <h2>Energy</h2>
-  <div role="group" aria-label="Energy">
+  <div class="stack" role="group" aria-label="Energy">
     {#each energyLevels as level (level)}
-      <button type="button" onclick={() => chooseEnergy(level)}>{level}</button>
+      <button type="button" class="big-btn raw-value" onclick={() => chooseEnergy(level)}>{level}</button>
     {/each}
   </div>
 {:else if step === 'pain'}
@@ -98,33 +112,99 @@
   <PainStep oncomplete={completePain} />
 {:else if step === 'minutes'}
   <h2>Available minutes</h2>
-  <div role="group" aria-label="Available minutes">
+  <div class="stack" role="group" aria-label="Available minutes">
     {#each minutesOptions as minutes (minutes)}
-      <button type="button" onclick={() => chooseMinutes(minutes)}>{minutes} min</button>
+      <button type="button" class="big-btn" onclick={() => chooseMinutes(minutes)}>{minutes} min</button>
     {/each}
   </div>
 {:else if step === 'equipment'}
   <h2>Equipment</h2>
-  <div role="group" aria-label="Equipment">
+  <div class="stack" role="group" aria-label="Equipment">
     {#each equipmentContexts as context (context)}
-      <button type="button" onclick={() => chooseEquipment(context)}>{context}</button>
+      <button type="button" class="big-btn raw-value" onclick={() => chooseEquipment(context)}>{context}</button>
     {/each}
   </div>
   {#if errorMessage}
-    <p role="alert">{errorMessage}</p>
+    <p class="error-text" role="alert">{errorMessage}</p>
   {/if}
 {:else if step === 'submitting'}
-  <p>Submitting your check-in…</p>
+  <p class="eyebrow">Submitting your check-in…</p>
+  <Skeleton height="3.5rem" />
+  <Skeleton height="3.5rem" />
 {:else if step === 'result' && decision}
   {#if decision.kind === 'NORMAL' || decision.kind === 'DELOAD'}
-    <p>Today's training: {decision.kind === 'DELOAD' ? 'a lighter deload session' : 'a normal session'}.</p>
-    <button type="button" disabled={generating || generateSucceeded} onclick={generateWorkout}>
+    <p class="result-copy">
+      Today's training: {decision.kind === 'DELOAD' ? 'a lighter deload session' : 'a normal session'}.
+    </p>
+    <button type="button" class="big-btn" disabled={generating || generateSucceeded} onclick={generateWorkout}>
       {generateButtonLabel()}
     </button>
+    {#if generating}
+      <Skeleton height="1rem" width="70%" />
+    {/if}
     {#if generateError}
-      <p role="alert">{generateError}</p>
+      <p class="error-text" role="alert">{generateError}</p>
     {/if}
   {:else if decision.kind === 'ACTIVE_RECOVERY'}
-    <p>Today is an active recovery day — your recovery plan is ready.</p>
+    <p class="result-copy">Today is an active recovery day — your recovery plan is ready.</p>
   {/if}
 {/if}
+
+<style>
+  .eyebrow {
+    font-family: var(--font-data);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    margin: 0 0 var(--space-2);
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 var(--space-5);
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .big-btn {
+    display: block;
+    width: 100%;
+    font-family: var(--font-ui);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--paper-raised);
+    background: var(--accent-strong);
+    border: none;
+    border-radius: var(--radius);
+    padding: var(--space-5) var(--space-4);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .big-btn.raw-value {
+    text-transform: capitalize;
+  }
+
+  .big-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .result-copy {
+    font-size: 1.0625rem;
+    margin: 0 0 var(--space-5);
+  }
+
+  .error-text {
+    color: var(--danger);
+    font-size: 0.9375rem;
+    margin-top: var(--space-3);
+  }
+</style>
