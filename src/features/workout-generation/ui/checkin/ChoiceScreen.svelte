@@ -30,6 +30,7 @@
   <p class="result-copy">
     {resolved === 'REST' ? "Today's a rest day. Enjoy it." : 'Your active recovery walk is ready.'}
   </p>
+  <a href="/" class="text-btn">Back to home</a>
 {:else}
   <h1>Low energy, some time to spare</h1>
   <p class="dek">You could go for an easy walk, or take a full rest day — your call.</p>
@@ -86,6 +87,20 @@
 
   .result-copy {
     font-size: 1.0625rem;
+    margin: 0 0 var(--space-3);
+  }
+
+  .text-btn {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-family: var(--font-ui);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: var(--space-2) 0;
+    display: inline-block;
   }
 
   .error-text {
