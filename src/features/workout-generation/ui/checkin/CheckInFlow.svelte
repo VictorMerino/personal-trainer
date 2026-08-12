@@ -147,6 +147,7 @@
     {/if}
   {:else if decision.kind === 'ACTIVE_RECOVERY'}
     <p class="result-copy">Today is an active recovery day — your recovery plan is ready.</p>
+    <a href="/" class="text-btn">Back to home</a>
   {/if}
 {/if}
 
@@ -200,6 +201,19 @@
   .result-copy {
     font-size: 1.0625rem;
     margin: 0 0 var(--space-5);
+  }
+
+  .text-btn {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-family: var(--font-ui);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: var(--space-2) 0;
+    display: inline-block;
   }
 
   .error-text {
