@@ -185,75 +185,269 @@
     ending = false;
     if (result.ok) ended = true;
   }
+
+  function formatClock(totalSeconds: number): string {
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
 </script>
 
 {#if loading}
   <Skeleton height="8rem" label="Loading today's workout" />
 {:else if loadError}
-  <p role="alert">Could not load today's workout.</p>
+  <p class="error-text" role="alert">Could not load today's workout.</p>
 {:else if alreadyEnded || ended}
-  <p>Workout session finished. Nice work.</p>
+  <p class="result-copy">Workout session finished. Nice work.</p>
 {:else if exercises.length === 0}
-  <p>No exercises scheduled for today.</p>
+  <p class="result-copy">No exercises scheduled for today.</p>
 {:else if allSetsComplete}
-  <p>All sets logged for today.</p>
-  <button type="button" disabled={ending} onclick={endSession}>Finish workout</button>
+  <p class="result-copy">All sets logged for today.</p>
+  <button type="button" class="big-btn" disabled={ending} onclick={endSession}>Finish workout</button>
 {:else if currentExercise && currentTarget}
-  <h1>{currentExercise.catalogName}</h1>
-  <p>
+  <p class="eyebrow">
     Set {setIndex + 1} of {currentExercise.exercise.sets.length}
   </p>
+  <h1>{currentExercise.catalogName}</h1>
   {#if currentExercise.cues.length > 0}
-    <ul>
+    <ul class="cues">
       {#each currentExercise.cues as cue (cue)}
         <li>{cue}</li>
       {/each}
     </ul>
   {/if}
 
-  <p aria-live="assertive">{restAnnouncement}</p>
+  <p class="sr-only" aria-live="assertive">{restAnnouncement}</p>
   {#if resting}
-    <p>Resting: {restRemaining}s of {restTotal}s</p>
+    <div class="rest-panel">
+      <div class="rest-clock">{formatClock(restRemaining)}</div>
+      <div class="rest-track">
+        <div class="rest-fill" style:width="{(restRemaining / restTotal) * 100}%"></div>
+      </div>
+      <p class="rest-caption">Resting: {restRemaining}s of {restTotal}s</p>
+    </div>
   {/if}
 
   {#if currentTarget.kind === 'load'}
-    <div role="group" aria-label="Reps">
-      <button type="button" onclick={() => (reps = Math.max(1, reps - 1))}>-</button>
-      <span>{reps} reps</span>
-      <button type="button" onclick={() => (reps += 1)}>+</button>
-    </div>
-    <div role="group" aria-label="Load">
-      <button type="button" onclick={() => (loadKg = Math.max(0, loadKg - 2.5))}>-</button>
-      <span>{loadKg} kg</span>
-      <button type="button" onclick={() => (loadKg += 2.5)}>+</button>
+    <div class="stepper-row">
+      <div class="stepper" role="group" aria-label="Reps">
+        <button type="button" class="stepper-btn" onclick={() => (reps = Math.max(1, reps - 1))}>−</button>
+        <span class="stepper-value">{reps} reps</span>
+        <button type="button" class="stepper-btn" onclick={() => (reps += 1)}>+</button>
+      </div>
+      <div class="stepper" role="group" aria-label="Load">
+        <button type="button" class="stepper-btn" onclick={() => (loadKg = Math.max(0, loadKg - 2.5))}>−</button>
+        <span class="stepper-value">{loadKg} kg</span>
+        <button type="button" class="stepper-btn" onclick={() => (loadKg += 2.5)}>+</button>
+      </div>
     </div>
   {:else if currentTarget.kind === 'reps'}
-    <div role="group" aria-label="Reps">
-      <button type="button" onclick={() => (reps = Math.max(1, reps - 1))}>-</button>
-      <span>{reps} reps</span>
-      <button type="button" onclick={() => (reps += 1)}>+</button>
+    <div class="stepper-row">
+      <div class="stepper" role="group" aria-label="Reps">
+        <button type="button" class="stepper-btn" onclick={() => (reps = Math.max(1, reps - 1))}>−</button>
+        <span class="stepper-value">{reps} reps</span>
+        <button type="button" class="stepper-btn" onclick={() => (reps += 1)}>+</button>
+      </div>
     </div>
   {:else}
-    <div role="group" aria-label="Time">
-      <button type="button" onclick={() => (seconds = Math.max(5, seconds - 5))}>-</button>
-      <span>{seconds}s</span>
-      <button type="button" onclick={() => (seconds += 5)}>+</button>
+    <div class="stepper-row">
+      <div class="stepper" role="group" aria-label="Time">
+        <button type="button" class="stepper-btn" onclick={() => (seconds = Math.max(5, seconds - 5))}>−</button>
+        <span class="stepper-value">{seconds}s</span>
+        <button type="button" class="stepper-btn" onclick={() => (seconds += 5)}>+</button>
+      </div>
     </div>
   {/if}
 
-  <RpeBar mode="input" value={rpe} onchange={(v) => (rpe = v)} />
+  <div class="rpe-block">
+    <RpeBar mode="input" value={rpe} onchange={(v) => (rpe = v)} />
+  </div>
 
-  <button type="button" disabled={saving || rpe === null} onclick={logSet}>
+  <button type="button" class="big-btn" disabled={saving || rpe === null} onclick={logSet}>
     {saving ? 'Saving…' : 'Log set'}
   </button>
   {#if saveError}
-    <p role="alert">{saveError}</p>
+    <p class="error-text" role="alert">{saveError}</p>
   {/if}
 
-  <button type="button" onclick={skipExercise}>Skip exercise</button>
-  <button type="button" disabled={ending} onclick={endSession}>End session</button>
+  <div class="secondary-actions">
+    <button type="button" class="text-btn" onclick={skipExercise}>Skip exercise</button>
+    <button type="button" class="text-btn" disabled={ending} onclick={endSession}>End session</button>
+  </div>
 
   {#if toastMessage}
-    <Toast message={toastMessage} variant="success" />
+    <div class="toast-slot">
+      <Toast message={toastMessage} variant="success" />
+    </div>
   {/if}
 {/if}
+
+<style>
+  .eyebrow {
+    font-family: var(--font-data);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    margin: 0 0 var(--space-2);
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 var(--space-3);
+  }
+
+  .cues {
+    margin: 0 0 var(--space-5);
+    padding-left: 1.1rem;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .rest-panel {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+
+  .rest-clock {
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--accent-strong);
+    text-align: center;
+  }
+
+  .rest-track {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--line-soft);
+    overflow: hidden;
+    margin: var(--space-3) 0 var(--space-2);
+  }
+
+  .rest-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 1s linear;
+  }
+
+  .rest-caption {
+    font-family: var(--font-data);
+    font-size: 0.8125rem;
+    color: var(--ink-soft);
+    text-align: center;
+    margin: 0;
+  }
+
+  .stepper-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+  }
+
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .stepper-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .stepper-value {
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    min-width: 5ch;
+    text-align: center;
+  }
+
+  .rpe-block {
+    margin-bottom: var(--space-5);
+  }
+
+  .big-btn {
+    display: block;
+    width: 100%;
+    font-family: var(--font-ui);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--paper-raised);
+    background: var(--accent-strong);
+    border: none;
+    border-radius: var(--radius);
+    padding: var(--space-5) var(--space-4);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .big-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .secondary-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+
+  .text-btn {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-family: var(--font-ui);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: var(--space-2) 0;
+  }
+
+  .toast-slot {
+    margin-top: var(--space-4);
+  }
+
+  .result-copy {
+    font-size: 1.0625rem;
+    margin: 0 0 var(--space-5);
+  }
+
+  .error-text {
+    color: var(--danger);
+    font-size: 0.9375rem;
+    margin-top: var(--space-3);
+  }
+</style>
