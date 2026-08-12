@@ -54,28 +54,81 @@
 {#if loading}
   <Skeleton height="6rem" label="Loading today's status" />
 {:else if loadError}
-  <p role="alert">Could not load today's status.</p>
+  <p class="error-text" role="alert">Could not load today's status.</p>
 {:else if today && today.decision.kind !== 'CHOICE'}
   {#if today.decision.kind === 'ACTIVE_RECOVERY'}
-    <p>Today is an active recovery day.</p>
+    <p class="status-copy">Today is an active recovery day.</p>
   {:else if today.decision.kind === 'REST'}
-    <p>Today's a rest day.</p>
+    <p class="status-copy">Today's a rest day.</p>
   {:else if today.plan}
     {#if today.plan.endedAt}
-      <p>Today's workout is complete.</p>
+      <p class="status-copy">Today's workout is complete.</p>
     {:else}
-      <a href={`/workout/${today.plan.id}`}>Resume today's workout</a>
+      <a class="big-btn" href={`/workout/${today.plan.id}`}>Resume today's workout</a>
     {/if}
   {:else}
-    <button type="button" disabled={generating} onclick={generateWorkout}>
+    <button type="button" class="big-btn" disabled={generating} onclick={generateWorkout}>
       {generating ? 'Generating…' : "Generate today's workout"}
     </button>
     {#if generateError}
-      <p role="alert">{generateError}</p>
+      <p class="error-text" role="alert">{generateError}</p>
     {/if}
   {/if}
 
-  <nav>
-    <a href="/progress">View progress</a>
+  <nav class="nav-row">
+    <a class="text-link" href="/progress">View progress</a>
   </nav>
 {/if}
+
+<style>
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 var(--space-6);
+  }
+
+  .status-copy {
+    font-size: 1.0625rem;
+    margin: 0 0 var(--space-5);
+  }
+
+  .big-btn {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--font-ui);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--paper-raised);
+    background: var(--accent-strong);
+    border: none;
+    border-radius: var(--radius);
+    padding: var(--space-5) var(--space-4);
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .big-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .nav-row {
+    margin-top: var(--space-5);
+  }
+
+  .text-link {
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  .error-text {
+    color: var(--danger);
+    font-size: 0.9375rem;
+    margin-top: var(--space-3);
+  }
+</style>

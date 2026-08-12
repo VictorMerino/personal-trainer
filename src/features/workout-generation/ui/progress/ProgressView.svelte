@@ -49,9 +49,15 @@
 
 <h1>Progress</h1>
 
-<div role="group" aria-label="Range">
+<div class="chip-row" role="group" aria-label="Range">
   {#each ranges as option (option)}
-    <button type="button" class:selected={range === option} disabled={loading} onclick={() => selectRange(option)}>
+    <button
+      type="button"
+      class="chip"
+      class:selected={range === option}
+      disabled={loading}
+      onclick={() => selectRange(option)}
+    >
       {option}
     </button>
   {/each}
@@ -60,17 +66,19 @@
 {#if loading}
   <Skeleton height="12rem" label="Loading progress" />
 {:else if loadError}
-  <p role="alert">Could not load your progress.</p>
+  <p class="error-text" role="alert">Could not load your progress.</p>
 {:else if snapshot}
-  <section aria-label="Adherence">
+  <section class="block" aria-label="Adherence">
     <h2>Adherence</h2>
-    <p>{snapshot.adherence.loggedSets} of {snapshot.adherence.prescribedSets} sets logged ({adherencePercent}%)</p>
+    <p class="stat-line">
+      {snapshot.adherence.loggedSets} of {snapshot.adherence.prescribedSets} sets logged ({adherencePercent}%)
+    </p>
   </section>
 
-  <section aria-label="Volume by movement pattern">
+  <section class="block" aria-label="Volume by movement pattern">
     <h2>Volume by movement pattern</h2>
     {#if patternsWithVolume.length === 0}
-      <p>No logged sets in this range yet.</p>
+      <p class="empty-copy">No logged sets in this range yet.</p>
     {:else}
       <ul class="volume-list">
         {#each patternsWithVolume as [pattern, sets] (pattern)}
@@ -88,37 +96,109 @@
 {/if}
 
 <style>
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 var(--space-5);
+  }
+
+  h2 {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    margin: 0 0 var(--space-3);
+  }
+
+  .chip-row {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+  }
+
+  .chip {
+    font-family: var(--font-data);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: var(--space-2) var(--space-4);
+    cursor: pointer;
+  }
+
+  .chip.selected {
+    background: var(--accent);
+    color: var(--paper-raised);
+    border-color: var(--accent);
+  }
+
+  .chip:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .block {
+    margin-bottom: var(--space-6);
+  }
+
+  .stat-line {
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.0625rem;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .empty-copy {
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+  }
+
   .volume-list {
     list-style: none;
     padding: 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--space-3);
   }
 
   .volume-list li {
     display: grid;
-    grid-template-columns: 10rem 1fr 2rem;
+    grid-template-columns: 8rem 1fr 2.5rem;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--space-3);
+  }
+
+  .pattern-name {
+    font-size: 0.875rem;
+    text-transform: capitalize;
+  }
+
+  .pattern-count {
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+    text-align: right;
   }
 
   .bar-track {
-    background: #e2e8f0;
-    border-radius: 0.25rem;
-    height: 0.75rem;
+    background: var(--line-soft);
+    border-radius: 3px;
+    height: 8px;
     overflow: hidden;
   }
 
   .bar-fill {
     display: block;
     height: 100%;
-    background: #1e40af;
+    background: var(--accent);
   }
 
-  button.selected {
-    background: #1e40af;
-    color: white;
-    border-color: #1e40af;
+  .error-text {
+    color: var(--danger);
+    font-size: 0.9375rem;
   }
 </style>
