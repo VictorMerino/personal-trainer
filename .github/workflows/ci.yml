@@ -84,7 +84,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 2.113.0
       # No secrets needed (docs/adr/0012-test-strategy.md decision 3): a
       # fresh local Supabase's anon/service-role keys are generated from
       # this repo's own supabase/config.toml on a runner nobody else has
@@ -113,7 +113,7 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 2.113.0
       - run: supabase start
       - name: Export local Supabase credentials
         run: |
