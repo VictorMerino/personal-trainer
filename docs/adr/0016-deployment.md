@@ -53,17 +53,23 @@ documented in `AGENTS.md` ("a service-role client bypasses RLS entirely"),
 the smaller the blast radius of that key's exposure, the better — it has
 no reason to exist in a production serverless environment at all.
 
-### 4. First deploy is a manual `vercel` CLI link, not GitHub-integration auto-deploy
+### 4. Deploys run via a GitHub Action on push to `main`, not Vercel's own GitHub integration
 
-Vercel's GitHub integration would auto-deploy every push to `main`,
-which conflicts with this repo's existing rule that every merge is
-already human-reviewed on GitHub (`AGENTS.md` git workflow) — adding a
-second, unreviewed auto-deploy trigger on top of that doesn't add safety,
-it just adds a second place deploys can happen from. Manual `vercel
---prod` after a merge keeps deployment as a deliberate, reviewable-in-the-
-moment action, consistent with treating merges to `main` as the release
-train rather than every push. Revisit if manual deploys become a
-throughput bottleneck.
+Every push to `main` is already a human-reviewed merge (`AGENTS.md` git
+workflow, single-maintainer repo), so gating deploy on that push doesn't
+add an unreviewed trigger — it deploys exactly what was just approved.
+Vercel's built-in GitHub integration would achieve the same trigger, but
+a repo-owned Action (`.github/workflows/deploy.yml`) is preferred: it's
+versioned and reviewable like any other workflow, its logs live
+alongside CI's in the GitHub Actions tab instead of Vercel's dashboard,
+and it leaves room to add a separate preview-deploy job (`vercel deploy`,
+not `--prod`) on pull requests later for a staging environment, without
+switching deploy mechanisms. The Action authenticates with a Vercel
+token stored as a GitHub Actions secret and runs `vercel --prod
+--token=$VERCEL_TOKEN`; the linked project config
+(`vercel link`/`.vercel/project.json`) is set up once locally as part of
+the first manual deploy in this ADR, then committed so the Action reuses
+it.
 
 ## Consequences
 
@@ -74,13 +80,15 @@ throughput bottleneck.
 - The README's quickstart section should eventually note where the
   production URL lives, once the first deploy is live — tracked as a
   follow-up, not blocking this ADR.
-- If a second environment (staging) is ever needed, decision 4's
-  manual-deploy choice should be revisited — Vercel preview deployments
-  per-PR are a reasonable middle ground worth reconsidering then.
+- If a second environment (staging) is ever needed, decision 4 already
+  anticipates it: add a preview-deploy job on pull requests to the same
+  workflow file, reusing the linked Vercel project.
 
 ## Alternatives considered
 
-- **Vercel's GitHub auto-deploy integration** — rejected, see decision 4.
+- **Vercel's built-in GitHub integration** — rejected, see decision 4: a
+  repo-owned Action gives the same trigger with reviewable config and a
+  clearer path to a staging job.
 - **Seeding production with demo data via the existing script** — rejected,
   see decision 2: the script has a known unfixed gap and production
   should start from a real signup, not synthetic fixtures.
