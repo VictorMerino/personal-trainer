@@ -38,13 +38,22 @@ export function getTodayStatus(): Promise<ApiResult<TodayStatus>> {
 export interface SubmitCheckInResult {
   readonly decision: TrainingDecision;
   readonly checkInId: string;
+  readonly planId: string | null;
 }
 
 export function submitCheckIn(checkIn: DailyCheckIn): Promise<ApiResult<SubmitCheckInResult>> {
   return call('/api/checkin', { method: 'POST', body: JSON.stringify(checkIn) });
 }
 
-export function resolveChoice(checkInId: string, selection: 'ACTIVE_RECOVERY_WALK' | 'REST'): Promise<ApiResult<{ ok: true }>> {
+export interface ResolveChoiceResult {
+  readonly decision: TrainingDecision;
+  readonly planId: string | null;
+}
+
+export function resolveChoice(
+  checkInId: string,
+  selection: 'ACTIVE_RECOVERY_WALK' | 'REST',
+): Promise<ApiResult<ResolveChoiceResult>> {
   return call(`/api/checkin/${checkInId}/choice`, { method: 'POST', body: JSON.stringify({ selection }) });
 }
 

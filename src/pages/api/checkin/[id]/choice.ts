@@ -54,5 +54,6 @@ export const POST: APIRoute = async ({ request, params }) => {
 
   if (!planResult.ok) return jsonError(500, 'save-failed', 'Could not save plan.');
 
-  return jsonOk({ decision: resolved.value.decision });
+  const planId = decision.kind === 'ACTIVE_RECOVERY' ? planResult.value.id : null;
+  return jsonOk({ decision: resolved.value.decision, planId });
 };

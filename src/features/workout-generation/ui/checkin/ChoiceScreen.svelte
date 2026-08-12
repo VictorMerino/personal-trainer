@@ -10,6 +10,7 @@
   let submitting = $state(false);
   let errorMessage = $state<string | null>(null);
   let resolved = $state<'ACTIVE_RECOVERY_WALK' | 'REST' | null>(null);
+  let planId = $state<string | null>(null);
 
   async function choose(selection: 'ACTIVE_RECOVERY_WALK' | 'REST') {
     submitting = true;
@@ -23,6 +24,7 @@
       return;
     }
     resolved = selection;
+    planId = result.value.planId;
   }
 </script>
 
@@ -30,7 +32,11 @@
   <p class="result-copy">
     {resolved === 'REST' ? "Today's a rest day. Enjoy it." : 'Your active recovery walk is ready.'}
   </p>
-  <a href="/" class="text-btn">Back to home</a>
+  {#if planId}
+    <a href={`/workout/${planId}`} class="text-btn">View your plan</a>
+  {:else}
+    <a href="/" class="text-btn">Back to home</a>
+  {/if}
 {:else}
   <h1>Low energy, some time to spare</h1>
   <p class="dek">You could go for an easy walk, or take a full rest day — your call.</p>
