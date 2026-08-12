@@ -33,15 +33,18 @@
 <style>
   .rpe-bar {
     display: flex;
-    gap: 0.25rem;
+    gap: var(--space-1);
   }
 
   .rpe-cell {
     flex: 1;
-    padding: 0.5rem 0;
-    border: 1px solid #cbd5e1;
-    border-radius: 0.375rem;
-    background: white;
+    padding: var(--space-2) 0;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--paper-raised);
+    color: var(--ink);
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
     font-weight: 600;
   }
 
@@ -50,8 +53,8 @@
   }
 
   .rpe-cell.selected {
-    background: #1e40af;
-    color: white;
-    border-color: #1e40af;
+    background: var(--accent);
+    color: var(--paper-raised);
+    border-color: var(--accent);
   }
 </style>

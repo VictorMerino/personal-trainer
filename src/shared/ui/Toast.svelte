@@ -17,23 +17,26 @@
 
 <style>
   .toast {
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    font-family: var(--font-ui);
     font-weight: 600;
+    font-size: 0.9375rem;
   }
 
   .toast-success {
-    background: #dcfce7;
-    color: #166534;
+    background: var(--success-soft);
+    color: var(--ink);
   }
 
   .toast-error {
-    background: #fee2e2;
-    color: #991b1b;
+    background: var(--danger-soft);
+    color: var(--ink);
   }
 
   .toast-info {
-    background: #dbeafe;
-    color: #1e40af;
+    background: var(--paper-raised);
+    color: var(--ink);
   }
 </style>
