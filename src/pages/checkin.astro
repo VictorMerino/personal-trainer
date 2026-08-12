@@ -1,20 +1,14 @@
 ---
+import Layout from '../shared/ui/Layout.astro';
 import CheckInFlow from '../features/workout-generation/ui/checkin/CheckInFlow.svelte';
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Daily check-in</title>
-  </head>
-  <body>
-    <h1>Daily check-in</h1>
-    <CheckInFlow client:load />
-    <script>
-      import { requireSignedIn } from '../shared/supabase/browser-client';
+<Layout title="Daily check-in">
+  <h1>Daily check-in</h1>
+  <CheckInFlow client:load />
+  <script>
+    import { requireSignedIn } from '../shared/supabase/browser-client';
 
-      requireSignedIn();
-    </script>
-  </body>
-</html>
+    requireSignedIn();
+  </script>
+</Layout>

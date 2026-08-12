@@ -1,20 +1,14 @@
 ---
+import Layout from '../shared/ui/Layout.astro';
 import OnboardingForm from '../features/workout-generation/ui/onboarding/OnboardingForm.svelte';
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Set up your profile</title>
-  </head>
-  <body>
-    <h1>Set up your profile</h1>
-    <OnboardingForm client:load redirectTo="/" />
-    <script>
-      import { requireSignedIn } from '../shared/supabase/browser-client';
+<Layout title="Set up your profile">
+  <h1>Set up your profile</h1>
+  <OnboardingForm client:load redirectTo="/" />
+  <script>
+    import { requireSignedIn } from '../shared/supabase/browser-client';
 
-      requireSignedIn();
-    </script>
-  </body>
-</html>
+    requireSignedIn();
+  </script>
+</Layout>

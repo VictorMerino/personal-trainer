@@ -1,15 +1,9 @@
 ---
+import Layout from '../shared/ui/Layout.astro';
 import LoginForm from '../features/workout-generation/ui/auth/LoginForm.svelte';
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Sign in</title>
-  </head>
-  <body>
-    <h1>Sign in</h1>
-    <LoginForm client:load redirectTo="/onboarding" />
-  </body>
-</html>
+<Layout title="Sign in">
+  <h1>Sign in</h1>
+  <LoginForm client:load redirectTo="/onboarding" />
+</Layout>

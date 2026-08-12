@@ -1,19 +1,13 @@
 ---
+import Layout from '../shared/ui/Layout.astro';
 import ProgressView from '../features/workout-generation/ui/progress/ProgressView.svelte';
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Progress</title>
-  </head>
-  <body>
-    <ProgressView client:load />
-    <script>
-      import { requireSignedIn } from '../shared/supabase/browser-client';
+<Layout title="Progress">
+  <ProgressView client:load />
+  <script>
+    import { requireSignedIn } from '../shared/supabase/browser-client';
 
-      requireSignedIn();
-    </script>
-  </body>
-</html>
+    requireSignedIn();
+  </script>
+</Layout>

@@ -1,0 +1,121 @@
+:root {
+  --ink: #171b21;
+  --ink-soft: #454c56;
+  --paper: #f5f2ea;
+  --paper-raised: #ffffff;
+  --line: rgba(23, 27, 33, 0.14);
+  --line-soft: rgba(23, 27, 33, 0.08);
+
+  --accent: #b5792e;
+  --accent-strong: #8f5d21;
+  --accent-soft: #ecd9b8;
+
+  --success: #3f8f63;
+  --success-soft: #d9ecdf;
+  --danger: #be4b3c;
+  --danger-soft: #f4dcd7;
+
+  --font-ui:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-data: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, Consolas, monospace;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  --radius: 10px;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #ece8df;
+    --ink-soft: #b7b2a6;
+    --paper: #14171c;
+    --paper-raised: #1c2027;
+    --line: rgba(236, 232, 223, 0.16);
+    --line-soft: rgba(236, 232, 223, 0.08);
+    --accent: #d79a4e;
+    --accent-strong: #eeb56a;
+    --accent-soft: #3a2c17;
+    --success: #63b98a;
+    --success-soft: #1c3226;
+    --danger: #e0806e;
+    --danger-soft: #3a2019;
+  }
+}
+
+:root[data-theme='dark'] {
+  --ink: #ece8df;
+  --ink-soft: #b7b2a6;
+  --paper: #14171c;
+  --paper-raised: #1c2027;
+  --line: rgba(236, 232, 223, 0.16);
+  --line-soft: rgba(236, 232, 223, 0.08);
+  --accent: #d79a4e;
+  --accent-strong: #eeb56a;
+  --accent-soft: #3a2c17;
+  --success: #63b98a;
+  --success-soft: #1c3226;
+  --danger: #e0806e;
+  --danger-soft: #3a2019;
+}
+
+:root[data-theme='light'] {
+  --ink: #171b21;
+  --ink-soft: #454c56;
+  --paper: #f5f2ea;
+  --paper-raised: #ffffff;
+  --line: rgba(23, 27, 33, 0.14);
+  --line-soft: rgba(23, 27, 33, 0.08);
+  --accent: #b5792e;
+  --accent-strong: #8f5d21;
+  --accent-soft: #ecd9b8;
+  --success: #3f8f63;
+  --success-soft: #d9ecdf;
+  --danger: #be4b3c;
+  --danger-soft: #f4dcd7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
