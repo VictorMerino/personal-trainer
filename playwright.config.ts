@@ -21,7 +21,14 @@ export default defineConfig({
     command: 'pnpm astro dev --port 4321',
     url: 'http://127.0.0.1:4321',
     reuseExistingServer: !process.env.CI,
-    timeout: 60_000,
+    // CI shares the runner with the already-running Supabase Docker Compose
+    // stack (Postgres, GoTrue, PostgREST, Kong, Storage, Realtime, ...) on a
+    // 2-core runner, so a cold Vite dependency pre-bundle can take longer
+    // than the 60s that's fine locally. stdout/stderr piped so a real
+    // failure shows Astro's actual output instead of silence.
+    timeout: 120_000,
+    stdout: 'pipe',
+    stderr: 'pipe',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 });
