@@ -153,6 +153,7 @@
     {/if}
 
     <p class="field-label">Add a limitation</p>
+    <p class="field-sublabel">Zone</p>
     <div class="chip-row" role="group" aria-label="Add limitation zone">
       {#each zones as zone (zone)}
         <button
@@ -165,6 +166,7 @@
         </button>
       {/each}
     </div>
+    <p class="field-sublabel">Severity</p>
     <div class="chip-row" role="group" aria-label="Add limitation severity">
       {#each severities as severity (severity)}
         <button
@@ -229,6 +231,15 @@
     letter-spacing: 0.08em;
     color: var(--ink-soft);
     margin: 0 0 var(--space-2);
+  }
+
+  .field-sublabel {
+    font-family: var(--font-data);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    margin: var(--space-3) 0 var(--space-1);
   }
 
   .chip-row {
