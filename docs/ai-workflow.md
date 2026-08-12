@@ -73,6 +73,24 @@ it) rather than trusting that "a server is listening on the port" meant
 debugging time before the actual bug (the Astro serialization issue
 above) was isolated from this noise.
 
+**Three post-design-pass dead ends, none caught by any automated gate.**
+After the visual design pass (#41, #43–#46) shipped, a manual click-through
+of the deployed app found: the `ACTIVE_RECOVERY` and walk-check-in result
+screens both rendered a plan with no way back to the rest of the app (#49,
+#51); the plan they linked to didn't even exist yet, since neither
+`/api/checkin` nor `/api/checkin/[id]/choice` returned the generated
+`planId` to the client (#52); and onboarding's limitation chips (zone,
+severity) had no visible label distinguishing the two rows, legible only
+by guessing from button order. None of these are logic bugs a unit or
+component test would catch — every piece involved (redirect target,
+returned field, a missing `<p>`) is individually correct in isolation. Only
+walking the actual golden path as a user, after styling replaced the raw
+HTML that made the missing affordances more visually obvious by accident,
+surfaced them. Reinforces the existing "actually running things instead of
+trusting static checks" lesson below, but for finished-looking UI
+specifically: a styled screen can look complete while still being a dead
+end.
+
 ## What the LLM-generation guardrails actually look like in practice
 
 The "product-level guardrail" named in the README isn't a prompt
