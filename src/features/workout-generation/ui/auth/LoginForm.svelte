@@ -41,17 +41,94 @@
   }
 </script>
 
-<form onsubmit={handleSubmit}>
-  <label>
-    Email
-    <input type="email" bind:value={email} autocomplete="email" required disabled={submitting} />
+<form class="stack" onsubmit={handleSubmit}>
+  <label class="field">
+    <span class="field-label">Email</span>
+    <input
+      class="field-input"
+      type="email"
+      bind:value={email}
+      autocomplete="email"
+      required
+      disabled={submitting}
+    />
   </label>
-  <label>
-    Password
-    <input type="password" bind:value={password} autocomplete="current-password" required disabled={submitting} />
+  <label class="field">
+    <span class="field-label">Password</span>
+    <input
+      class="field-input"
+      type="password"
+      bind:value={password}
+      autocomplete="current-password"
+      required
+      disabled={submitting}
+    />
   </label>
-  <button type="submit" disabled={submitting}>{submitting ? 'Signing in…' : 'Sign in'}</button>
+  <button type="submit" class="big-btn" disabled={submitting}>{submitting ? 'Signing in…' : 'Sign in'}</button>
   {#if errorMessage}
-    <p role="alert">{errorMessage}</p>
+    <p class="error-text" role="alert">{errorMessage}</p>
   {/if}
 </form>
+
+<style>
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .field-label {
+    font-family: var(--font-data);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+
+  .field-input {
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    color: var(--ink);
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .field-input:disabled {
+    opacity: 0.6;
+  }
+
+  .big-btn {
+    display: block;
+    width: 100%;
+    font-family: var(--font-ui);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--paper-raised);
+    background: var(--accent-strong);
+    border: none;
+    border-radius: var(--radius);
+    padding: var(--space-5) var(--space-4);
+    text-align: center;
+    cursor: pointer;
+    margin-top: var(--space-2);
+  }
+
+  .big-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .error-text {
+    color: var(--danger);
+    font-size: 0.9375rem;
+    margin: 0;
+  }
+</style>
