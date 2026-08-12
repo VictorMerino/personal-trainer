@@ -649,6 +649,10 @@ works — which is precisely the thesis.
     dependency graph: scaffolding → domain → infrastructure → endpoints →
     UI → test infra/compliance/docs). See
     `docs/adr/0013-build-plan.md`.
+13. ~~Deployment~~ — **designed** (hosted Supabase project created before
+    Vercel, EU region closing ADR-0015's open compliance item, manual
+    `vercel --prod` after merge rather than a second auto-deploy trigger
+    on top of GitHub's own review gate). See `docs/adr/0016-deployment.md`.
 
 ---
 
