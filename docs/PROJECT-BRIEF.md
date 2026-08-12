@@ -1,9 +1,13 @@
 # Personal-TrAIner — Project Brief
 
-> **Status:** Design phase. This document is the source of truth for *what* we are
-> building and *why*. It is the context document for AI agents working on this repo.
+> **Status:** MVP built and deployed. All scope in §2 is implemented; hosted
+> Supabase (EU) and the GitHub Action deploy to Vercel (`docs/adr/0016-deployment.md`)
+> are both live. This document remains the source of truth for *what* was built
+> and *why* — it is the context document for AI agents working on this repo.
+> Remaining work is course-submission material (see `docs/COURSE-SUBMISSION.md`),
+> not product scope.
 >
-> **Related documents (to be created):**
+> **Related documents:**
 > - `AGENTS.md` — short, imperative operating rules for the coding agent
 > - `docs/adr/` — architecture decision records
 > - `docs/features/*.md` — BDD specs, written before implementation
@@ -530,7 +534,9 @@ items where the role does not disambiguate.
 
 ## 9. Deployment, access control and cost
 
-Deployed on **Vercel**. Repo is **public**.
+Deployed on **Vercel**, via a repo-owned GitHub Action on push to `main`
+rather than Vercel's own GitHub integration (`docs/adr/0016-deployment.md`).
+Repo is **public**.
 
 | Concern | Solution |
 |---|---|
@@ -649,10 +655,11 @@ works — which is precisely the thesis.
     dependency graph: scaffolding → domain → infrastructure → endpoints →
     UI → test infra/compliance/docs). See
     `docs/adr/0013-build-plan.md`.
-13. ~~Deployment~~ — **designed** (hosted Supabase project created before
-    Vercel, EU region closing ADR-0015's open compliance item, manual
-    `vercel --prod` after merge rather than a second auto-deploy trigger
-    on top of GitHub's own review gate). See `docs/adr/0016-deployment.md`.
+13. ~~Deployment~~ — **designed and executed** (hosted Supabase project
+    created before Vercel, EU region closing ADR-0015's open compliance
+    item, deploys run via a repo-owned GitHub Action on push to `main`
+    rather than Vercel's own GitHub integration). See
+    `docs/adr/0016-deployment.md`.
 
 ---
 
