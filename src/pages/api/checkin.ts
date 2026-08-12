@@ -48,6 +48,7 @@ export const POST: APIRoute = async ({ request }) => {
   const saved = await checkInRepository.saveCheckIn(userId, date, checkIn, decision);
   if (!saved.ok) return jsonError(500, 'save-failed', 'Could not save check-in.');
 
+  let planId: string | null = null;
   if (decision.kind === 'ACTIVE_RECOVERY') {
     const workoutRepository = new SupabaseWorkoutRepository(supabase);
     const storedLimitations = await getActiveLimitations(supabase, userId);
@@ -60,7 +61,8 @@ export const POST: APIRoute = async ({ request }) => {
       effectiveLimitations,
     );
     if (!planResult.ok) return jsonError(500, 'save-failed', 'Could not save active-recovery plan.');
+    planId = planResult.value.id;
   }
 
-  return jsonOk({ decision, checkInId: saved.value.id });
+  return jsonOk({ decision, checkInId: saved.value.id, planId });
 };

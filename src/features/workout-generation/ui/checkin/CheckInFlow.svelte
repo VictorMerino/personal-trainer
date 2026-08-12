@@ -27,6 +27,7 @@
 
   let decision = $state<TrainingDecision | null>(null);
   let checkInId = $state<string | null>(null);
+  let activeRecoveryPlanId = $state<string | null>(null);
   let errorMessage = $state<string | null>(null);
   let generating = $state(false);
   let generateError = $state<string | null>(null);
@@ -66,6 +67,7 @@
 
     decision = result.value.decision;
     checkInId = result.value.checkInId;
+    activeRecoveryPlanId = result.value.planId;
 
     if (decision?.kind === 'CHOICE') {
       window.location.href = `/checkin/${checkInId}/choice`;
@@ -147,7 +149,11 @@
     {/if}
   {:else if decision.kind === 'ACTIVE_RECOVERY'}
     <p class="result-copy">Today is an active recovery day — your recovery plan is ready.</p>
-    <a href="/" class="text-btn">Back to home</a>
+    {#if activeRecoveryPlanId}
+      <a href={`/workout/${activeRecoveryPlanId}`} class="text-btn">View your plan</a>
+    {:else}
+      <a href="/" class="text-btn">Back to home</a>
+    {/if}
   {/if}
 {/if}
 
