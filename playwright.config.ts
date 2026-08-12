@@ -18,10 +18,18 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: 'pnpm astro dev --port 4321',
+    // --host 127.0.0.1 pins the dev server to the same address this
+    // config's healthcheck (url, below) polls. Without it, Vite binds
+    // whatever 'localhost' resolves to first — on GitHub Actions runners
+    // that's frequently the IPv6 loopback (::1) — so the server comes up
+    // fine but the IPv4 healthcheck never connects and this always times
+    // out, independent of how much boot time is budgeted.
+    command: 'pnpm astro dev --port 4321 --host 127.0.0.1',
     url: 'http://127.0.0.1:4321',
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
+    stdout: 'pipe',
+    stderr: 'pipe',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 });
