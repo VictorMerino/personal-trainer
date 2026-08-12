@@ -18,6 +18,16 @@ const { title }: Props = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <slot />
+    <main class="page">
+      <slot />
+    </main>
   </body>
 </html>
+
+<style>
+  .page {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-5) var(--space-8);
+  }
+</style>
