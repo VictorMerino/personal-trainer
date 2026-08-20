@@ -152,7 +152,7 @@
     {#if activeRecoveryPlanId}
       <a href={`/workout/${activeRecoveryPlanId}`} class="text-btn">View your plan</a>
     {:else}
-      <a href="/" class="text-btn">Back to home</a>
+      <a href="/app" class="text-btn">Back to home</a>
     {/if}
   {/if}
 {/if}

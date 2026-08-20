@@ -16,7 +16,7 @@
     redirectTo?: string;
   }
 
-  const { redirectTo = '/' }: Props = $props();
+  const { redirectTo = '/app' }: Props = $props();
 
   const goals: Goal[] = ['strength', 'hypertrophy', 'general_fitness'];
   const levels: ExperienceLevel[] = ['beginner', 'intermediate', 'advanced'];
