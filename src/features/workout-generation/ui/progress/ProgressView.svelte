@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { getProgress } from '../api-client';
   import Skeleton from '../../../../shared/ui/Skeleton.svelte';
   import type { ProgressRange } from '../../domain/progress/progress-range';
@@ -34,7 +35,7 @@
     loadSnapshot();
   }
 
-  loadSnapshot();
+  onMount(loadSnapshot);
 
   const adherencePercent = $derived(snapshot ? Math.round(snapshot.adherence.ratio * 100) : 0);
   const maxVolume = $derived(

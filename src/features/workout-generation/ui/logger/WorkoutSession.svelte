@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { endSession as endSessionRequest, getWorkout, logSet as logSetRequest, skipExercise as skipExerciseRequest } from '../api-client';
   import RpeBar from '../../../../shared/ui/RpeBar.svelte';
   import Skeleton from '../../../../shared/ui/Skeleton.svelte';
@@ -93,7 +94,7 @@
     }
   }
 
-  loadPlan();
+  onMount(loadPlan);
 
   function stopRestTimer() {
     if (restTimerHandle) window.clearInterval(restTimerHandle);
