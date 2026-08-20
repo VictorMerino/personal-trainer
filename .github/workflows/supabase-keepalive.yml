@@ -12,6 +12,7 @@ jobs:
       - run: |
           curl -sf -o /dev/null -w '%{http_code}\n' \
             -H "apikey: $SUPABASE_ANON_KEY" \
-            "https://hkdxvycifczxvvndsffd.supabase.co/rest/v1/"
+            "$SUPABASE_URL/rest/v1/"
         env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
