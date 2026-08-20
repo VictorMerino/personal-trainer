@@ -1,0 +1,135 @@
+---
+import IosDevice from './IosDevice.astro';
+
+const repChoices = [6, 7, 8, 9, 10];
+---
+
+<IosDevice width={260} height={560}>
+  <div class="screen">
+    <div class="header">
+      <div class="eyebrow">SET 2 OF 3</div>
+      <div class="title">Goblet squat</div>
+    </div>
+    <div class="rep-card">
+      <div class="round-btn">–</div>
+      <div class="rep-count">12 reps</div>
+      <div class="round-btn">+</div>
+    </div>
+    <div class="rep-row">
+      {
+        repChoices.map((v) => (
+          <div class="rep-choice" class:list={{ active: v === 8 }}>
+            {v}
+          </div>
+        ))
+      }
+    </div>
+    <div class="cta">
+      <div class="btn">Log set</div>
+    </div>
+    <div class="skip">Skip exercise</div>
+  </div>
+</IosDevice>
+
+<style>
+  .screen {
+    background: #f8f0e8;
+    height: 100%;
+    padding-top: 64px;
+    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .header {
+    padding: 8px 20px 0;
+  }
+
+  .eyebrow {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: rgba(24, 24, 32, 0.55);
+    margin-bottom: 8px;
+  }
+
+  .title {
+    font-size: 19px;
+    font-weight: 800;
+    color: #181820;
+  }
+
+  .rep-card {
+    margin: 16px 20px 0;
+    background: #fff;
+    border: 1px solid rgba(24, 24, 32, 0.14);
+    border-radius: 14px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .round-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(24, 24, 32, 0.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #181820;
+  }
+
+  .rep-count {
+    font-weight: 800;
+    font-size: 15px;
+    color: #181820;
+  }
+
+  .rep-row {
+    margin: 18px 20px 0;
+    display: flex;
+    gap: 5px;
+  }
+
+  .rep-choice {
+    flex: 1;
+    text-align: center;
+    padding: 9px 0;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #181820;
+    border: 1.5px solid rgba(24, 24, 32, 0.14);
+  }
+
+  .rep-choice.active {
+    background: #a46221;
+    color: #fff;
+    border: none;
+  }
+
+  .cta {
+    margin: 20px 20px 0;
+  }
+
+  .btn {
+    background: #a46221;
+    color: #fff;
+    text-align: center;
+    padding: 16px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 15.5px;
+  }
+
+  .skip {
+    margin: 16px 20px 0;
+    text-align: center;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: rgba(24, 24, 32, 0.55);
+    text-decoration: underline;
+  }
+</style>

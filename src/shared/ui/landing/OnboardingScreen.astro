@@ -1,0 +1,100 @@
+---
+import IosDevice from './IosDevice.astro';
+---
+
+<IosDevice width={260} height={560}>
+  <div class="screen">
+    <div class="title">Set up your profile</div>
+    <div class="field">
+      <div class="label">Goal</div>
+      <div class="pills">
+        <span class="pill">Strength</span>
+        <span class="pill active">General fitness</span>
+      </div>
+    </div>
+    <div class="field">
+      <div class="label">Experience</div>
+      <div class="pills">
+        <span class="pill active">Beginner</span>
+        <span class="pill">Intermediate</span>
+      </div>
+    </div>
+    <div class="field">
+      <div class="label">Equipment</div>
+      <div class="pills">
+        <span class="pill">None</span>
+        <span class="pill active">Basic</span>
+        <span class="pill">Gym</span>
+      </div>
+    </div>
+    <div class="limitation">
+      <div class="eyebrow">ADD A LIMITATION</div>
+      <div class="pills">
+        <span class="pill active">Knee</span>
+        <span class="pill">Shoulder</span>
+        <span class="pill">Hip</span>
+      </div>
+    </div>
+  </div>
+</IosDevice>
+
+<style>
+  .screen {
+    background: #f8f0e8;
+    height: 100%;
+    padding-top: 64px;
+    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .title {
+    padding: 8px 20px 4px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #181820;
+  }
+
+  .field {
+    padding: 16px 22px;
+  }
+
+  .label {
+    font-size: 15px;
+    font-weight: 700;
+    color: #181820;
+    margin-bottom: 10px;
+  }
+
+  .pills {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    padding: 10px 15px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1.5px solid rgba(24, 24, 32, 0.14);
+    color: #181820;
+  }
+
+  .pill.active {
+    background: #a46221;
+    color: #fff;
+    border: none;
+  }
+
+  .limitation {
+    padding: 4px 22px 0;
+  }
+
+  .eyebrow {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: rgba(24, 24, 32, 0.55);
+    margin-bottom: 10px;
+  }
+</style>
