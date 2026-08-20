@@ -8,7 +8,7 @@ import { LlmPlanContentSchema, toWorkoutPlan } from './llm-plan-content.schema';
 
 // Reconfirm against console.groq.com/docs at integration time (PROJECT-BRIEF
 // §7: provider models/limits change often).
-const DEFAULT_MODEL = 'llama-3.3-70b-versatile';
+const DEFAULT_MODEL = 'openai/gpt-oss-120b';
 const DEFAULT_BASE_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const DEFAULT_TIMEOUT_MS = 15_000;
 
