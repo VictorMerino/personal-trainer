@@ -35,7 +35,7 @@
   {#if planId}
     <a href={`/workout/${planId}`} class="text-btn">View your plan</a>
   {:else}
-    <a href="/" class="text-btn">Back to home</a>
+    <a href="/app" class="text-btn">Back to home</a>
   {/if}
 {:else}
   <h1>Low energy, some time to spare</h1>

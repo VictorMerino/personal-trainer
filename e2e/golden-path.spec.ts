@@ -16,7 +16,7 @@ test('check-in resolves to NORMAL, generates a workout, logs and skips sets, the
   // is pre-seeded with a profile (e2e/global-setup.ts), so this spec goes
   // straight to the home page rather than re-onboarding.
   await page.waitForURL('**/onboarding');
-  await page.goto('/');
+  await page.goto('/app');
   await waitForHydration(page);
 
   await page.waitForURL('**/checkin');
@@ -46,7 +46,7 @@ test('check-in resolves to NORMAL, generates a workout, logs and skips sets, the
   await page.getByRole('button', { name: 'End session' }).click();
   await expect(page.getByText('Workout session finished. Nice work.')).toBeVisible();
 
-  await page.goto('/');
+  await page.goto('/app');
   await waitForHydration(page);
   await expect(page.getByText("Today's workout is complete.")).toBeVisible();
 });

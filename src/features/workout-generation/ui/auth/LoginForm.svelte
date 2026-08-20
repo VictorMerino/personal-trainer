@@ -13,7 +13,7 @@
     redirectTo?: string;
   }
 
-  const { redirectTo = '/' }: Props = $props();
+  const { redirectTo = '/app' }: Props = $props();
 
   let email = $state('');
   let password = $state('');

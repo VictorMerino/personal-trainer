@@ -19,7 +19,7 @@ test('check-in resolves to CHOICE, resolving to REST shows no generate call', as
   await page.getByRole('button', { name: 'Sign in' }).click();
 
   await page.waitForURL('**/onboarding');
-  await page.goto('/');
+  await page.goto('/app');
   await waitForHydration(page);
 
   await page.waitForURL('**/checkin');
@@ -39,7 +39,7 @@ test('check-in resolves to CHOICE, resolving to REST shows no generate call', as
 
   expect(generateCalls).toHaveLength(0);
 
-  await page.goto('/');
+  await page.goto('/app');
   await waitForHydration(page);
   await expect(page.getByText("Today's a rest day.")).toBeVisible();
 });
