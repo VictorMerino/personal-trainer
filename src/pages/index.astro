@@ -358,19 +358,31 @@ import LoggingScreen from '../shared/ui/landing/LoggingScreen.astro';
     font-size: 16px;
     color: var(--ink);
     letter-spacing: -0.01em;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .navlinks {
     display: flex;
     align-items: center;
     gap: 32px;
-    flex-wrap: wrap;
   }
 
   .navlinks a:not(.btn-accent-sm) {
     font-size: 14.5px;
     font-weight: 500;
     color: var(--ink-dim);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .navlinks a:not(.btn-accent-sm) {
+      display: none;
+    }
+
+    .navlinks {
+      gap: 16px;
+    }
   }
 
   .btn-accent,
