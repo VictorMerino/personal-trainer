@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { generateWorkout as generateWorkoutRequest, getTodayStatus, type TodayStatus } from '../api-client';
   import Skeleton from '../../../../shared/ui/Skeleton.svelte';
 
@@ -33,7 +34,7 @@
     }
   }
 
-  loadToday();
+  onMount(loadToday);
 
   async function generateWorkout() {
     generating = true;
