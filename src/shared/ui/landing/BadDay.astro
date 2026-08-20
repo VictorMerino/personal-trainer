@@ -1,0 +1,141 @@
+---
+---
+
+<div class="section bordered">
+  <div class="medium">
+    <div class="narrow center section-head">
+      <div class="eyebrow muted">When plans break</div>
+      <div class="h2">What happens when today doesn't go to plan?</div>
+      <div class="stack-lines">
+        <div>You planned to train.</div>
+        <div>But your knee hurts.</div>
+        <div class="dim">A rigid plan doesn't know what to do.</div>
+        <div class="punch">Personal-TrAIner does.</div>
+      </div>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-label accent-text">LOW ENERGY</div>
+        <div class="card-body-lg">Your session can be reduced.</div>
+      </div>
+      <div class="card">
+        <div class="card-label accent-text">LIMITED BY PAIN</div>
+        <div class="card-body-lg">Exercises that don't fit your current limitations are removed.</div>
+      </div>
+      <div class="card">
+        <div class="card-label accent-text">NOT ENOUGH TIME</div>
+        <div class="card-body-lg">Your workout can adapt to the time you actually have.</div>
+      </div>
+    </div>
+    <div class="center punch-lg">Your plan adapts. You don't have to force it.</div>
+  </div>
+</div>
+
+<style>
+  .section {
+    padding: 100px 0;
+  }
+
+  .section.bordered {
+    border-top: 1px solid var(--line);
+  }
+
+  .medium {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 64px);
+  }
+
+  .narrow {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  .section-head {
+    max-width: 640px;
+    margin: 0 auto 48px;
+  }
+
+  .eyebrow {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .eyebrow.muted {
+    color: var(--ink-faint);
+  }
+
+  .h2 {
+    font-weight: 800;
+    font-size: clamp(28px, 3.6vw, 42px);
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 30px;
+  }
+
+  .stack-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 18px;
+    color: var(--ink-dim);
+    font-weight: 500;
+  }
+
+  .stack-lines .dim {
+    color: rgba(245, 240, 232, 0.4);
+  }
+
+  .stack-lines .punch {
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 19px;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 28px 26px;
+  }
+
+  .card-label {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-weight: 700;
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .accent-text {
+    color: var(--accent);
+  }
+
+  .card-body-lg {
+    font-size: 16px;
+    color: rgba(245, 240, 232, 0.7);
+    line-height: 1.5;
+    font-weight: 500;
+  }
+
+  .punch-lg {
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+</style>

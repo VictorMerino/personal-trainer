@@ -1,0 +1,127 @@
+---
+interface Props {
+  width?: number;
+  height?: number;
+}
+
+const { width = 320, height = 660 }: Props = Astro.props;
+---
+
+<div
+  class="ios-device"
+  style={`width:${width}px;height:${height}px;`}
+>
+  <div class="dynamic-island"></div>
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="19" height="12" viewBox="0 0 19 12">
+        <rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill="#000" />
+        <rect x="4.8" y="5" width="3.2" height="7" rx="0.7" fill="#000" />
+        <rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill="#000" />
+        <rect x="14.4" y="0" width="3.2" height="12" rx="0.7" fill="#000" />
+      </svg>
+      <svg width="17" height="12" viewBox="0 0 17 12">
+        <path
+          d="M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z"
+          fill="#000"
+        />
+        <path
+          d="M8.5 6.8C9.9 6.8 11.1 7.3 12 8.2L13.1 7.1C11.8 5.9 10.2 5.1 8.5 5.1C6.8 5.1 5.2 5.9 3.9 7.1L5 8.2C5.9 7.3 7.1 6.8 8.5 6.8Z"
+          fill="#000"
+        />
+        <circle cx="8.5" cy="10.5" r="1.5" fill="#000" />
+      </svg>
+      <svg width="27" height="13" viewBox="0 0 27 13">
+        <rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="#000" stroke-opacity="0.35" fill="none" />
+        <rect x="2" y="2" width="20" height="9" rx="2" fill="#000" />
+        <path d="M25 4.5V8.5C25.8 8.2 26.5 7.2 26.5 6.5C26.5 5.8 25.8 4.8 25 4.5Z" fill="#000" fill-opacity="0.4" />
+      </svg>
+    </div>
+  </div>
+  <div class="ios-content">
+    <slot />
+  </div>
+  <div class="home-indicator-wrap">
+    <div class="home-indicator"></div>
+  </div>
+</div>
+
+<style>
+  .ios-device {
+    border-radius: 48px;
+    overflow: hidden;
+    position: relative;
+    background: #f2f2f7;
+    box-shadow:
+      0 40px 80px rgba(0, 0, 0, 0.18),
+      0 0 0 1px rgba(0, 0, 0, 0.12);
+    font-family: -apple-system, system-ui, sans-serif;
+  }
+
+  .dynamic-island {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 37px;
+    border-radius: 24px;
+    background: #000;
+    z-index: 50;
+  }
+
+  .status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 21px 24px 19px;
+    box-sizing: border-box;
+  }
+
+  .status-time {
+    font-family: -apple-system, 'SF Pro', system-ui;
+    font-weight: 590;
+    font-size: 17px;
+    line-height: 22px;
+    color: #000;
+  }
+
+  .status-icons {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .ios-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-indicator-wrap {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    height: 34px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 8px;
+    pointer-events: none;
+  }
+
+  .home-indicator {
+    width: 139px;
+    height: 5px;
+    border-radius: 100px;
+    background: rgba(0, 0, 0, 0.25);
+  }
+</style>

@@ -1,81 +1,79 @@
 ---
-import Layout from '../shared/ui/Layout.astro';
+import Navbar from '../shared/ui/landing/Navbar.astro';
+import Hero from '../shared/ui/landing/Hero.astro';
+import ProblemSection from '../shared/ui/landing/ProblemSection.astro';
+import Interstitial from '../shared/ui/landing/Interstitial.astro';
+import HowItWorks from '../shared/ui/landing/HowItWorks.astro';
+import Loop from '../shared/ui/landing/Loop.astro';
+import BadDay from '../shared/ui/landing/BadDay.astro';
+import Guardrails from '../shared/ui/landing/Guardrails.astro';
+import NoChatbot from '../shared/ui/landing/NoChatbot.astro';
+import ProductSection from '../shared/ui/landing/ProductSection.astro';
+import Footer from '../shared/ui/landing/Footer.astro';
 ---
 
-<Layout title="Personal-TrAIner">
-  <p class="eyebrow">Personal-TrAIner</p>
-  <h1>A workout plan that adapts to how you're actually doing.</h1>
-  <p class="pitch">
-    Tell it your goals and constraints, and it generates a workout for today. Check in
-    afterward — how it felt, what you skipped — and tomorrow's plan adjusts accordingly.
-  </p>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>Personal-TrAIner</title>
+  </head>
+  <body>
+    <div class="page">
+      <Navbar />
+      <Hero />
+      <ProblemSection />
+      <Interstitial />
+      <HowItWorks />
+      <Loop />
+      <BadDay />
+      <Guardrails />
+      <NoChatbot />
+      <ProductSection />
+      <Footer />
+    </div>
+  </body>
+</html>
 
-  <ol class="steps">
-    <li>Set your goals, level, and equipment once.</li>
-    <li>Get a workout generated for you each day.</li>
-    <li>Check in after training, and the plan adapts from there.</li>
-  </ol>
-
-  <a href="/login" class="big-btn">Sign in</a>
-
-  <p class="invite-note">
-    Personal-TrAIner is currently invite-only while it's in early development — no public
-    signup yet.
-  </p>
-</Layout>
-
-<style>
-  .eyebrow {
-    margin: 0 0 var(--space-2);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--accent-strong);
+<style is:global>
+  :root {
+    --ink: #f5f0e8;
+    --ink-dim: rgba(245, 240, 232, 0.55);
+    --ink-faint: rgba(245, 240, 232, 0.4);
+    --bg: #181820;
+    --card: #1e1e29;
+    --accent: #f0b868;
+    --accent-hover: #e0a050;
+    --line: rgba(245, 240, 232, 0.08);
   }
 
-  h1 {
-    margin: 0 0 var(--space-4);
-    font-size: 1.75rem;
-    line-height: 1.25;
-  }
-
-  .pitch {
-    margin: 0 0 var(--space-6);
-    color: var(--ink-soft);
-    font-size: 1.0625rem;
-  }
-
-  .steps {
-    margin: 0 0 var(--space-7);
-    padding-left: var(--space-5);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    color: var(--ink);
-  }
-
-  .big-btn {
-    display: block;
-    width: 100%;
+  * {
     box-sizing: border-box;
-    font-family: var(--font-ui);
-    font-size: 1.0625rem;
-    font-weight: 600;
-    color: var(--paper-raised);
-    background: var(--accent-strong);
-    border: none;
-    border-radius: var(--radius);
-    padding: var(--space-5) var(--space-4);
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
   }
 
-  .invite-note {
-    margin: var(--space-5) 0 0;
-    color: var(--ink-soft);
-    font-size: 0.875rem;
-    text-align: center;
+  body {
+    margin: 0;
+    background: var(--bg);
+  }
+
+  a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--accent);
+  }
+
+  ::selection {
+    background: rgba(240, 184, 104, 0.3);
+  }
+
+  .page {
+    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    overflow-x: hidden;
   }
 </style>

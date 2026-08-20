@@ -1,0 +1,146 @@
+---
+import CheckInScreen from './CheckInScreen.astro';
+import WorkoutScreen from './WorkoutScreen.astro';
+---
+
+<div id="hero" class="section hero">
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow accent">Your plan isn't fixed. Because you aren't either.</div>
+      <div class="headline">Your training plan<br />adapts to you.</div>
+      <div class="subhead">Your energy changes.<br />Your body changes.<br />Your schedule changes.</div>
+      <p class="lede">
+        Personal-TrAIner creates your workout based on how you're feeling today — and adapts what comes
+        next based on how you actually trained.
+      </p>
+      <div class="cta-row">
+        <a href="/login" class="btn-accent">Get started</a>
+        <span class="fineprint">Currently invite-only.</span>
+      </div>
+    </div>
+    <div class="hero-phones">
+      <div class="phone-scale" style="width:140.8px;height:290.4px;">
+        <div class="phone-scale-inner" style="transform:scale(0.44);"><CheckInScreen /></div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="phone-scale" style="width:140.8px;height:290.4px;">
+        <div class="phone-scale-inner" style="transform:scale(0.44);"><WorkoutScreen /></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .section {
+    padding: 100px 0;
+  }
+
+  .hero {
+    padding: clamp(56px, 9vw, 108px) 0 100px;
+  }
+
+  .hero-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 64px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 56px;
+    align-items: center;
+  }
+
+  .eyebrow {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .eyebrow.accent {
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .headline {
+    font-weight: 800;
+    font-size: clamp(38px, 5vw, 58px);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .subhead {
+    margin-top: 26px;
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--ink-dim);
+    font-weight: 500;
+  }
+
+  .lede {
+    margin-top: 20px;
+    font-size: 17px;
+    line-height: 1.65;
+    color: rgba(245, 240, 232, 0.55);
+    max-width: 480px;
+  }
+
+  .cta-row {
+    margin-top: 36px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
+  .fineprint {
+    font-size: 14px;
+    color: var(--ink-faint);
+    font-weight: 500;
+  }
+
+  .btn-accent {
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 999px;
+    font-weight: 700;
+    display: inline-block;
+    padding: 16px 34px;
+    font-size: 16px;
+  }
+
+  .btn-accent:hover {
+    background: var(--accent-hover);
+    color: var(--bg);
+  }
+
+  .hero-phones {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .phone-scale {
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .phone-scale-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+  }
+
+  .arrow {
+    font-size: 24px;
+    color: rgba(245, 240, 232, 0.3);
+    flex-shrink: 0;
+  }
+</style>

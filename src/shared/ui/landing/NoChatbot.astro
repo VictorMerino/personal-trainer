@@ -1,0 +1,147 @@
+---
+import OnboardingScreen from './OnboardingScreen.astro';
+import CheckInScreen from './CheckInScreen.astro';
+import WorkoutScreen from './WorkoutScreen.astro';
+import LoggingScreen from './LoggingScreen.astro';
+---
+
+<div class="section bordered">
+  <div class="wide">
+    <div class="narrow center section-head">
+      <div class="eyebrow muted">No chat window</div>
+      <div class="h2">Your personal trainer doesn't need a chat window.</div>
+      <div class="stack-lines">
+        <div>No prompts.</div>
+        <div>No endless conversations.</div>
+        <div>No explaining how you're feeling to an AI.</div>
+      </div>
+      <div class="h3">Tap. Choose. Train.</div>
+    </div>
+    <div class="phone-row">
+      <div class="phone-item">
+        <div class="phone-scale" style="width:187.2px;height:403.2px;">
+          <div class="phone-scale-inner" style="transform:scale(0.72);"><OnboardingScreen /></div>
+        </div>
+        <div class="phone-caption">Onboarding</div>
+      </div>
+      <div class="phone-item">
+        <div class="phone-scale" style="width:176px;height:363px;">
+          <div class="phone-scale-inner" style="transform:scale(0.55);"><CheckInScreen /></div>
+        </div>
+        <div class="phone-caption">Check-in</div>
+      </div>
+      <div class="phone-item">
+        <div class="phone-scale" style="width:176px;height:363px;">
+          <div class="phone-scale-inner" style="transform:scale(0.55);"><WorkoutScreen /></div>
+        </div>
+        <div class="phone-caption">Workout</div>
+      </div>
+      <div class="phone-item">
+        <div class="phone-scale" style="width:187.2px;height:403.2px;">
+          <div class="phone-scale-inner" style="transform:scale(0.72);"><LoggingScreen /></div>
+        </div>
+        <div class="phone-caption">Logging</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .section {
+    padding: 100px 0;
+  }
+
+  .section.bordered {
+    border-top: 1px solid var(--line);
+  }
+
+  .wide {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 64px);
+  }
+
+  .narrow {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  .section-head {
+    margin: 0 auto 20px;
+  }
+
+  .eyebrow {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .eyebrow.muted {
+    color: var(--ink-faint);
+  }
+
+  .h2 {
+    font-weight: 800;
+    font-size: clamp(26px, 3.4vw, 38px);
+    line-height: 1.18;
+    color: var(--ink);
+    margin-bottom: 22px;
+  }
+
+  .stack-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 16.5px;
+    color: rgba(245, 240, 232, 0.45);
+    font-weight: 500;
+    margin-bottom: 22px;
+  }
+
+  .h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .phone-row {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 56px;
+  }
+
+  .phone-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .phone-scale {
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .phone-scale-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+  }
+
+  .phone-caption {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(245, 240, 232, 0.45);
+  }
+</style>

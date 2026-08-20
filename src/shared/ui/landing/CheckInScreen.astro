@@ -1,0 +1,113 @@
+---
+import IosDevice from './IosDevice.astro';
+---
+
+<IosDevice width={320} height={660}>
+  <div class="screen">
+    <div class="header">
+      <div class="title">Daily check-in</div>
+    </div>
+    <div class="field">
+      <div class="label">Energy</div>
+      <div class="pills">
+        <span class="pill">Low</span>
+        <span class="pill active">Okay</span>
+        <span class="pill">Great</span>
+      </div>
+    </div>
+    <div class="field">
+      <div class="label">Pain</div>
+      <div class="pills">
+        <span class="pill active">Knee</span>
+        <span class="pill">Shoulder</span>
+        <span class="pill">None</span>
+      </div>
+    </div>
+    <div class="field">
+      <div class="label">Time</div>
+      <div class="pills">
+        <span class="pill">20 min</span>
+        <span class="pill active">35 min</span>
+        <span class="pill">50 min</span>
+      </div>
+    </div>
+    <div class="field">
+      <div class="label">Equipment</div>
+      <div class="pills">
+        <span class="pill active">Full gym</span>
+        <span class="pill">Dumbbells</span>
+      </div>
+    </div>
+    <div class="cta">
+      <div class="btn">Generate today's workout</div>
+    </div>
+  </div>
+</IosDevice>
+
+<style>
+  .screen {
+    background: #f8f0e8;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-top: 64px;
+    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .header {
+    padding: 10px 22px 2px;
+  }
+
+  .title {
+    font-size: 23px;
+    font-weight: 800;
+    color: #181820;
+  }
+
+  .field {
+    padding: 16px 22px;
+  }
+
+  .label {
+    font-size: 15px;
+    font-weight: 700;
+    color: #181820;
+    margin-bottom: 10px;
+  }
+
+  .pills {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    padding: 10px 15px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1.5px solid rgba(24, 24, 32, 0.14);
+    color: #181820;
+  }
+
+  .pill.active {
+    background: #a46221;
+    color: #fff;
+    border: none;
+  }
+
+  .cta {
+    margin-top: auto;
+    padding: 22px;
+  }
+
+  .btn {
+    background: #a46221;
+    color: #fff;
+    text-align: center;
+    padding: 16px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 15.5px;
+  }
+</style>
