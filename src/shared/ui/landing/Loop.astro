@@ -1,0 +1,103 @@
+---
+---
+
+<div class="section bordered subtle-bg">
+  <div class="medium center">
+    <div class="eyebrow muted">The loop</div>
+    <div class="h2">One plan.<br />Every day, different.</div>
+    <div class="loop-row">
+      <span class="loop-pill">CHECK IN</span>
+      <span class="loop-arrow">→</span>
+      <span class="loop-pill">GET YOUR WORKOUT</span>
+      <span class="loop-arrow">→</span>
+      <span class="loop-pill">TRAIN</span>
+      <span class="loop-arrow">→</span>
+      <span class="loop-pill">CHECK IN</span>
+      <span class="loop-arrow">→</span>
+      <span class="loop-pill loop-pill-accent">ADAPT</span>
+    </div>
+    <div class="lede-center">Every workout becomes information for the next one.</div>
+  </div>
+</div>
+
+<style>
+  .section {
+    padding: 100px 0;
+  }
+
+  .section.bordered {
+    border-top: 1px solid var(--line);
+  }
+
+  .section.subtle-bg {
+    background: rgba(255, 255, 255, 0.015);
+  }
+
+  .medium {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 64px);
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .eyebrow.muted {
+    color: var(--ink-faint);
+  }
+
+  .h2 {
+    font-weight: 800;
+    font-size: clamp(28px, 3.6vw, 42px);
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 36px;
+  }
+
+  .loop-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 56px 0 40px;
+  }
+
+  .loop-pill {
+    background: var(--card);
+    border: 1px solid rgba(245, 240, 232, 0.14);
+    color: var(--ink);
+    padding: 13px 22px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  .loop-pill-accent {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+  }
+
+  .loop-arrow {
+    color: rgba(245, 240, 232, 0.3);
+    font-size: 18px;
+  }
+
+  .lede-center {
+    font-size: 19px;
+    color: var(--ink-dim);
+    font-weight: 500;
+  }
+</style>

@@ -1,0 +1,44 @@
+---
+---
+
+<div class="section bordered tinted">
+  <div class="medium center">
+    <div class="big-quote">Your plan isn't fixed.<br /><span class="accent-text">Because you aren't either.</span></div>
+  </div>
+</div>
+
+<style>
+  .section {
+    padding: 100px 0;
+  }
+
+  .section.bordered {
+    border-top: 1px solid var(--line);
+  }
+
+  .section.tinted {
+    background: rgba(240, 184, 104, 0.05);
+  }
+
+  .medium {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 64px);
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  .big-quote {
+    font-weight: 800;
+    font-size: clamp(30px, 4.2vw, 48px);
+    line-height: 1.18;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .accent-text {
+    color: var(--accent);
+  }
+</style>

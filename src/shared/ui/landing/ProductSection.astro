@@ -1,0 +1,168 @@
+---
+---
+
+<div id="product" class="section bordered subtle-bg">
+  <div class="wide">
+    <div class="narrow center section-head">
+      <div class="eyebrow muted">The product</div>
+      <div class="h2">Everything you need. Nothing you don't.</div>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-label">DAILY CHECK-IN</div>
+        <div class="card-body">Know how you're doing today.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">ADAPTIVE WORKOUTS</div>
+        <div class="card-body">A session built around your current state.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">WORKOUT LOGGING</div>
+        <div class="card-body">Log sets, reps and RPE as you train.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">PROGRESS</div>
+        <div class="card-body">See how your training evolves over time.</div>
+      </div>
+    </div>
+    <div class="closing">
+      <div class="h2">Real life doesn't follow a training plan.<br />So why should your training app?</div>
+      <p class="lede-center">
+        Personal-TrAIner adapts your training to how you're actually doing — today, and every day after.
+      </p>
+      <div class="cta-col">
+        <a href="/login" class="btn-accent">Get started</a>
+        <span class="fineprint">Currently invite-only.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .section {
+    padding: 100px 0 120px;
+  }
+
+  .section.bordered {
+    border-top: 1px solid var(--line);
+  }
+
+  .section.subtle-bg {
+    background: rgba(255, 255, 255, 0.015);
+  }
+
+  .wide {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 64px);
+  }
+
+  .narrow {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  .section-head {
+    margin: 0 auto 56px;
+  }
+
+  .eyebrow {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .eyebrow.muted {
+    color: var(--ink-faint);
+  }
+
+  .h2 {
+    font-weight: 800;
+    font-size: clamp(28px, 3.6vw, 42px);
+    line-height: 1.15;
+    color: var(--ink);
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 100px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 30px 26px;
+  }
+
+  .card-label {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-weight: 700;
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  .card-body {
+    font-size: 15px;
+    color: rgba(245, 240, 232, 0.55);
+    line-height: 1.5;
+  }
+
+  .closing {
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+    border-top: 1px solid var(--line);
+    padding-top: 90px;
+  }
+
+  .closing .h2 {
+    margin-bottom: 24px;
+  }
+
+  .lede-center {
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(245, 240, 232, 0.55);
+    margin: 0 0 40px;
+  }
+
+  .cta-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .btn-accent {
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 999px;
+    font-weight: 700;
+    display: inline-block;
+    padding: 17px 38px;
+    font-size: 16px;
+  }
+
+  .btn-accent:hover {
+    background: var(--accent-hover);
+    color: var(--bg);
+  }
+
+  .fineprint {
+    font-size: 14px;
+    color: var(--ink-faint);
+    font-weight: 500;
+  }
+</style>

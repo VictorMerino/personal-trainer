@@ -1,0 +1,83 @@
+---
+---
+
+<div class="navbar">
+  <div class="navbar-inner">
+    <div class="wordmark">Personal-TrAIner</div>
+    <div class="navlinks">
+      <a href="#product">Product</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="/login" class="btn-accent-sm">Get started</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(24, 24, 32, 0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .navbar-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 18px clamp(24px, 5vw, 64px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .wordmark {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .navlinks {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .navlinks a:not(.btn-accent-sm) {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ink-dim);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .navlinks a:not(.btn-accent-sm) {
+      display: none;
+    }
+
+    .navlinks {
+      gap: 16px;
+    }
+  }
+
+  .btn-accent-sm {
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 999px;
+    font-weight: 700;
+    display: inline-block;
+    padding: 10px 22px;
+    font-size: 14px;
+  }
+
+  .btn-accent-sm:hover {
+    background: var(--accent-hover);
+    color: var(--bg);
+  }
+</style>
