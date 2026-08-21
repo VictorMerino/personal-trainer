@@ -200,6 +200,10 @@
   <p class="error-text" role="alert">Could not load today's workout.</p>
 {:else if alreadyEnded || ended}
   <p class="result-copy">Workout session finished. Nice work.</p>
+  <div class="secondary-actions">
+    <a href="/app" class="text-btn">Back to home</a>
+    <a href="/progress" class="text-btn">View progress</a>
+  </div>
 {:else if exercises.length === 0}
   <p class="result-copy">No exercises scheduled for today.</p>
 {:else if allSetsComplete}
