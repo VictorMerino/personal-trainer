@@ -12,8 +12,7 @@ jobs:
       - run: |
           curl -sf -o /dev/null -w '%{http_code}\n' \
             -H "apikey: $SUPABASE_ANON_KEY" \
-            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
-            "$SUPABASE_URL/rest/v1/"
+            "$SUPABASE_URL/auth/v1/health"
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}

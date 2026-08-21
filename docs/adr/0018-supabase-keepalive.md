@@ -24,12 +24,25 @@ undone manually from the Supabase dashboard, which takes a couple of
 minutes and would otherwise recur roughly weekly for a project without
 regular real traffic. `.github/workflows/supabase-keepalive.yml` runs
 daily (`workflow_dispatch` also available for manual runs) and hits `GET
-$SUPABASE_URL/rest/v1/` with the anon key, which is enough API activity
-to reset the inactivity timer without touching any table. `SUPABASE_URL`
-and `SUPABASE_ANON_KEY` are GitHub Actions secrets, not hardcoded — the
-project ref itself isn't sensitive (it's already public in every browser
-request the deployed site makes), but keeping it out of the workflow
-file avoids needing to edit the file if the project is ever recreated.
+$SUPABASE_URL/auth/v1/health` with the anon/publishable key in the
+`apikey` header, which is enough API activity to reset the inactivity
+timer without touching any table. `SUPABASE_URL` and `SUPABASE_ANON_KEY`
+are GitHub Actions secrets, not hardcoded — the project ref itself isn't
+sensitive (it's already public in every browser request the deployed
+site makes), but keeping it out of the workflow file avoids needing to
+edit the file if the project is ever recreated.
+
+Originally targeted `GET $SUPABASE_URL/rest/v1/` (PostgREST's root/
+schema-introspection path). That broke in 2026-08 when Supabase's new
+API key system (JWT-style anon keys → opaque `sb_publishable_...` keys)
+shipped alongside a gateway change restricting that root path to the
+`service_role` key only — an anon/publishable key now gets a 401
+(`Only the service_role API key can be used for this endpoint`)
+regardless of correctness. Switched to GoTrue's `/auth/v1/health`
+endpoint instead, which only needs the `apikey` header (no
+`Authorization` — passing the new opaque key as a `Bearer` token also
+401s, since it isn't a JWT) and returns 200 with a version/name payload
+for any valid key.
 
 ## Consequences
 
