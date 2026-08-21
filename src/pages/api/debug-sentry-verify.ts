@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { jsonError } from '../_shared/api-error';
+import { jsonError } from './_shared/api-error';
 
 export const prerender = false;
 
