@@ -14,8 +14,11 @@ export interface ApiError {
 // this is centralized here rather than left to each call site to remember.
 export async function jsonError(status: number, code: string, message: string): Promise<Response> {
   if (status >= 500) {
-    Sentry.captureMessage(`${code}: ${message}`, { level: 'error', tags: { code } });
-    await Sentry.flush(5000);
+    console.log('[sentry-verify] capturing', code);
+    const eventId = Sentry.captureMessage(`${code}: ${message}`, { level: 'error', tags: { code } });
+    console.log('[sentry-verify] captured, eventId:', eventId);
+    const flushed = await Sentry.flush(5000);
+    console.log('[sentry-verify] flush result:', flushed);
   }
   const body: ApiError = { error: { code, message } };
   return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
