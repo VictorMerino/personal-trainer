@@ -697,6 +697,28 @@ Also on the roadmap, lower priority but cheap to note now:
   more than a UI change — they touch how the domain model accounts for "today"
   (one `WorkoutPlan` per day is assumed throughout progression, adherence and
   volume-trend logic), so this needs its own design pass, not a quick patch.
+- **Substitution reasons on generated plans** — when the generator swaps or drops
+  an exercise (a limitation excludes it, time budget shrinks the session), the
+  plan doesn't currently say why. Add a reason to the affected exercise (e.g. an
+  optional field on `PrescribedExercise` for deterministic swaps; the LLM path
+  would need its prompt/schema to emit one explicitly) and surface it in the
+  workout UI. Noticed while drafting the demo video script — describing the app
+  as "telling you why" wasn't actually true yet.
+- **Human-body diagram for pain reporting** — `PainStep.svelte`'s zone picker is
+  currently a plain button list. A tappable body outline (front/back) would be a
+  more natural way to mark where it hurts than reading a list of zone names.
+  Someday item, not scoped — cheap to note now, worth a callout in the demo video.
+- **Post-workout summary screen** — `WorkoutSession.svelte`'s finished state is
+  currently just "Workout session finished. Nice work." plus two links. Replace
+  with what was actually done and how it went — sets/volume, RPE trend for the
+  session, maybe a chart — before sending the user back to `/app`/`/progress`.
+- **Cooldown/stretch exercises in generated plans** — the catalog schema already
+  supports `kind: 'mobility'` / `role: 'cooldown'` (§6) as the intended way
+  "stretches based on what you trained" would work, but the generator doesn't
+  use it yet: `candidatesForPattern` (`exercise-rotation.ts`) explicitly excludes
+  `kind !== 'mobility'`, so no cooldown block is ever attached to a plan today.
+  This is schema-ready, not implemented — wiring it in is the actual roadmap
+  item.
 
 Note: **progression** (how logged RPE drives load/rep changes over time) is *not* a
 roadmap item — it's core to the MVP thesis and already tracked as design item 5 in
