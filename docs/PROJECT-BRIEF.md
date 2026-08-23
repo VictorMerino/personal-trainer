@@ -689,7 +689,45 @@ Also on the roadmap, lower priority but cheap to note now:
   near-identical, cache/reuse rather than re-prompting. Explicitly not for the MVP:
   it's an optimization that needs real usage data to know if it's even true, and
   premature caching risks staleness bugs for a saving that may not matter yet.
+- **In-workout and same-day flexibility** — the MVP plan is fixed once generated
+  for the day: no way to add exercises/sets mid-session if energy is higher than
+  expected, swap a set for an easier variant mid-set if it's too much, start an
+  unplanned workout on a day with nothing scheduled, or start a second session
+  later the same day after already finishing one in the morning. All four need
+  more than a UI change — they touch how the domain model accounts for "today"
+  (one `WorkoutPlan` per day is assumed throughout progression, adherence and
+  volume-trend logic), so this needs its own design pass, not a quick patch.
 
 Note: **progression** (how logged RPE drives load/rep changes over time) is *not* a
 roadmap item — it's core to the MVP thesis and already tracked as design item 5 in
 §12 ("Progression and autoregulation rules... the heart of the thesis").
+
+---
+
+## 14. How we iterate from here
+
+MVP-scope gaps (bugs, small missing UX like nav or redirect handling) still take
+priority over roadmap work — finish those first.
+
+For everything past that, this project maps roughly onto an epic/story/task
+hierarchy without adopting a separate tool:
+
+- **Epic** — a roadmap item big enough to need its own design thinking (nutrition
+  tracking, marathon prep, in-workout flexibility, ...). Written up here in §13, or
+  as its own ADR once it's ready to be designed in detail — not duplicated as a
+  GitHub issue while it's still an idea.
+- **Story** — a GitHub issue: one user-facing, roughly PR-sized chunk of work,
+  consistent with `docs/adr/0013-build-plan.md`'s "one PR per feature-spec scenario
+  group." This is what issues have been used for so far (MVP bugs/gaps).
+- **Task** — a checklist (`- [ ] ...`) inside a story issue, not a separate ticket.
+
+Labels carry the rest of the triage:
+
+- `someday` — a small, self-contained idea not worth scoping yet (e.g. captured on
+  the go from a phone).
+- `roadmap` — a story that belongs to one of the §13 epics but isn't scheduled.
+
+Ideas captured away from the repo (a phone notes app, thinking out loud) get
+triaged in periodically: either filed as a `someday`/`roadmap` issue, or, if they
+turn out bigger than expected, folded into this document as a new §13 bullet or
+ADR candidate instead.
