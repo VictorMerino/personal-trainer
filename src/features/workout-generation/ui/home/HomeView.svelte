@@ -75,10 +75,6 @@
       <p class="error-text" role="alert">{generateError}</p>
     {/if}
   {/if}
-
-  <nav class="nav-row">
-    <a class="text-link" href="/progress">View progress</a>
-  </nav>
 {/if}
 
 <style>
@@ -114,17 +110,6 @@
   .big-btn:disabled {
     opacity: 0.6;
     cursor: default;
-  }
-
-  .nav-row {
-    margin-top: var(--space-5);
-  }
-
-  .text-link {
-    color: var(--ink-soft);
-    font-size: 0.9375rem;
-    font-weight: 600;
-    text-decoration: underline;
   }
 
   .error-text {

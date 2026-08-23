@@ -1,11 +1,17 @@
 ---
 import '../ui/tokens.css';
+import BottomNav from './nav/BottomNav.svelte';
+import DemoBanner from './DemoBanner.svelte';
 
 interface Props {
   title: string;
+  // Shows the bottom nav with this tab active. Omit to hide it entirely
+  // (onboarding, login, check-in, and an active workout session don't
+  // show it — nothing should tempt you away mid-flow there).
+  navActive?: 'home' | 'progress';
 }
 
-const { title }: Props = Astro.props;
+const { title, navActive }: Props = Astro.props;
 ---
 
 <html lang="en">
@@ -18,9 +24,11 @@ const { title }: Props = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <main class="page">
+    <main class="page" class:list={[{ 'has-nav': navActive }]}>
+      <DemoBanner client:load />
       <slot />
     </main>
+    {navActive && <BottomNav client:load active={navActive} />}
   </body>
 </html>
 
@@ -29,5 +37,9 @@ const { title }: Props = Astro.props;
     max-width: 480px;
     margin: 0 auto;
     padding: var(--space-6) var(--space-5) var(--space-8);
+  }
+
+  .page.has-nav {
+    padding-bottom: calc(var(--space-8) + 3.5rem);
   }
 </style>

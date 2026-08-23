@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { EXERCISE_CATALOG } from '../../../features/workout-generation/domain/exercise/catalog';
-import { DAILY_GENERATION_LIMIT } from '../../../features/workout-generation/domain/generator/generator.constants';
+import { DAILY_GENERATION_LIMIT, DEMO_DAILY_GENERATION_LIMIT } from '../../../features/workout-generation/domain/generator/generator.constants';
 import { buildHistorySummary, RECENT_HISTORY_WINDOW_DAYS } from '../../../features/workout-generation/domain/history/history-summary';
 import { FallbackChainPlanner } from '../../../features/workout-generation/domain/planner/fallback-chain-planner';
 import { DeterministicPlanner } from '../../../features/workout-generation/domain/planner/deterministic-planner';
@@ -15,6 +15,7 @@ import { getActiveLimitations } from '../../../features/workout-generation/infra
 import { getProfileGoal } from '../../../features/workout-generation/infrastructure/supabase/supabase-profile-query';
 import { requireUser } from '../_shared/require-user';
 import { jsonError, jsonOk } from '../_shared/api-error';
+import { isDemoUser } from '../_shared/demo-users';
 
 export const prerender = false;
 
@@ -61,17 +62,26 @@ export const POST: APIRoute = async ({ request }) => {
   });
   if (quotaError) return jsonError(500, 'quota-failed', 'Could not update generation quota.');
 
+  const demo = isDemoUser(userId);
+  // A demo account never reaches Groq/OpenRouter, and — unlike the normal
+  // quota above — actually stops once its (much lower) cap is hit, rather
+  // than silently degrading (see DEMO_DAILY_GENERATION_LIMIT).
+  if (demo && (quotaCount as number) > DEMO_DAILY_GENERATION_LIMIT) {
+    return jsonError(429, 'demo-limit-reached', 'The demo account is limited to a few generations per day. Please try again tomorrow.');
+  }
+
   const withinQuota = (quotaCount as number) <= DAILY_GENERATION_LIMIT;
-  const planner = withinQuota
-    ? createWorkoutPlanner({
-        groq: { apiKey: import.meta.env.GROQ_API_KEY, model: import.meta.env.GROQ_MODEL, baseUrl: import.meta.env.GROQ_BASE_URL },
-        openrouter: {
-          apiKey: import.meta.env.OPENROUTER_API_KEY,
-          model: import.meta.env.OPENROUTER_MODEL,
-          baseUrl: import.meta.env.OPENROUTER_BASE_URL,
-        },
-      })
-    : new FallbackChainPlanner([new DeterministicPlanner()], new ConsolePlannerTelemetry());
+  const planner =
+    demo || !withinQuota
+      ? new FallbackChainPlanner([new DeterministicPlanner()], new ConsolePlannerTelemetry())
+      : createWorkoutPlanner({
+          groq: { apiKey: import.meta.env.GROQ_API_KEY, model: import.meta.env.GROQ_MODEL, baseUrl: import.meta.env.GROQ_BASE_URL },
+          openrouter: {
+            apiKey: import.meta.env.OPENROUTER_API_KEY,
+            model: import.meta.env.OPENROUTER_MODEL,
+            baseUrl: import.meta.env.OPENROUTER_BASE_URL,
+          },
+        });
 
   let plan;
   try {
