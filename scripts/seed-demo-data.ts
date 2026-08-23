@@ -14,9 +14,11 @@
 // Usage:
 //   node --env-file=.env scripts/seed-demo-data.ts --email=demo@example.com [--reset]
 //
-// Needs SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY (service role bypasses
-// RLS — required since this writes on behalf of an arbitrary user without
-// that user's own session/JWT). Never printed, never logged.
+// Needs SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY — the privileged key that
+// bypasses RLS, required since this writes on behalf of an arbitrary user
+// without that user's own session/JWT. Use the dashboard's Secret API key
+// (sb_secret_...) here, not the legacy service_role JWT — same privilege,
+// current naming (Project Settings → API). Never printed, never logged.
 
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { EXERCISE_CATALOG } from '../src/features/workout-generation/domain/exercise/catalog.ts';
@@ -45,7 +47,7 @@ function parseArgs(argv: readonly string[]): { email: string; reset: boolean } {
 
 function requireEnv(name: string): string {
   const value = process.env[name];
-  if (!value) throw new Error(`${name} must be set (service role key, not the anon key)`);
+  if (!value) throw new Error(`${name} must be set (Secret API / service role key, not the anon key)`);
   return value;
 }
 
@@ -215,6 +217,7 @@ async function seed(admin: SupabaseClient, userId: string): Promise<void> {
     const date = new Date(today.getTime() - dayIndex * 24 * 60 * 60 * 1000);
     const dateStr = date.toISOString().slice(0, 10);
     const checkIn = buildCheckIn(dayIndex);
+    const decision = decideTrainingMode(checkIn);
 
     const { error: checkinError } = await admin.from('daily_checkins').insert({
       user_id: userId,
@@ -222,10 +225,9 @@ async function seed(admin: SupabaseClient, userId: string): Promise<void> {
       energy: checkIn.energy,
       available_minutes: checkIn.availableMinutes,
       equipment_context: checkIn.equipmentContext,
+      decision,
     });
     if (checkinError) throw new Error(`Could not seed check-in for ${dateStr}: ${checkinError.message}`);
-
-    const decision = decideTrainingMode(checkIn);
     // CHOICE only arises on low-energy/low-time days: demo data always
     // takes the active-recovery branch rather than the "no plan" REST one.
     // decideTrainingMode itself never returns REST (only CHOICE resolution
@@ -248,6 +250,13 @@ async function seed(admin: SupabaseClient, userId: string): Promise<void> {
     if (!saved.ok) throw new Error(`Could not save plan for ${dateStr}: ${saved.error.message}`);
 
     await logSession(repository, userId, saved.value.id, plan, date, state);
+
+    // /progress only counts finalized sessions (ended_at not null) — see
+    // getFinalizedPlansInRange / getRecentSetLogs. Without this, seeded
+    // sessions never show up on the progress page.
+    const ended = await repository.endSession(userId, saved.value.id, null);
+    if (!ended.ok) throw new Error(`Could not finalize session for ${dateStr}: ${ended.error.message}`);
+
     await admin.rpc('increment_generation_quota', { p_user_id: userId, p_date: dateStr });
     sessionsLogged++;
   }
