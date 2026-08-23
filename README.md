@@ -36,6 +36,28 @@ about this in the app itself:
   silently degrading further.
 - Data may be reset at any time.
 
+**[Slides](https://docs.google.com/presentation/d/1vXPNsd_l5nKhksr1VHgKsP24aDur56cJ/edit?usp=sharing&ouid=116249605441361681965&rtpof=true&sd=true)**
+
+## Stack
+
+- [Astro](https://astro.build) (SSR) + [Svelte 5](https://svelte.dev) islands for the interactive UI
+- [Supabase](https://supabase.com) (Postgres, Auth, RLS, PostgREST) for storage and auth
+- Groq → OpenRouter → deterministic fallback chain for AI-generated workouts, gated by domain rules
+- [Zod](https://zod.dev) for validation, scoped component CSS (no CSS framework)
+- [Vitest](https://vitest.dev) (unit/RLS) + [Playwright](https://playwright.dev) (E2E), `dependency-cruiser` + `eslint-plugin-boundaries` for architecture enforcement
+- Deployed on [Vercel](https://vercel.com), errors tracked with [Sentry](https://sentry.io)
+
+## Features
+
+- **Daily readiness check-in** — energy, pain, and available time shape each
+  day's workout before generation ever runs.
+- **AI-generated, domain-constrained workouts** — an LLM proposes the plan,
+  but a pain/readiness policy it cannot override decides what's safe to
+  prescribe.
+- **Gym logger** — logs sets/reps/RPE against the day's prescribed workout.
+- **Progress tracking** — adherence and training history over time, backed
+  by real logged sessions.
+
 ## Screenshots
 
 | Onboarding | Check-in | Gym logger | Progress |
