@@ -3,7 +3,7 @@ import Layout from '../shared/ui/Layout.astro';
 import ProgressView from '../features/workout-generation/ui/progress/ProgressView.svelte';
 ---
 
-<Layout title="Progress">
+<Layout title="Progress" navActive="progress">
   <ProgressView client:load />
   <script>
     import { requireSignedIn } from '../shared/supabase/browser-client';

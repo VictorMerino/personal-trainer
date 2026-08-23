@@ -68,13 +68,12 @@ describe('HomeView', () => {
     await vi.waitFor(() => expect(window.location.href).toBe('/workout/plan-2'));
   });
 
-  it('shows an active-recovery message with a link to progress', async () => {
+  it('shows an active-recovery message', async () => {
     authorizedFetch.mockResolvedValueOnce(
       jsonResponse({ checkInId: 'ci-1', decision: { kind: 'ACTIVE_RECOVERY', reason: 'severe-pain' }, plan: null }),
     );
     render(HomeView);
 
     expect(await screen.findByText('Today is an active recovery day.')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'View progress' })).toHaveAttribute('href', '/progress');
   });
 });

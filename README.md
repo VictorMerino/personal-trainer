@@ -17,6 +17,25 @@ trusting a non-deterministic system without letting it wreck things —
 solved twice, at two different layers. See `docs/ai-workflow.md` for how
 that worked in practice, including what went wrong.
 
+## Try it live
+
+**[personal-trainer-indol.vercel.app](https://personal-trainer-indol.vercel.app/)**
+
+Public signup is disabled (see Quickstart below), but there's an open demo
+account:
+
+- Email: `demo@personal-trainer.app`
+- Password: `demo-trainer-2026`
+
+It's intentionally constrained, not a full account — you'll see a banner
+about this in the app itself:
+
+- Workout generation never reaches Groq/OpenRouter, it's always the
+  deterministic fallback — no AI cost on a publicly-shared credential.
+- Capped at 3 generations/day; past that it returns an error instead of
+  silently degrading further.
+- Data may be reset at any time.
+
 ## Screenshots
 
 | Onboarding | Check-in | Gym logger | Progress |

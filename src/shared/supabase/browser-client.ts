@@ -28,6 +28,13 @@ export async function getAccessToken(): Promise<string | null> {
   return session?.access_token ?? null;
 }
 
+export async function getCurrentUserId(): Promise<string | null> {
+  const {
+    data: { session },
+  } = await getSupabaseBrowserClient().auth.getSession();
+  return session?.user.id ?? null;
+}
+
 // Every signed-in-only page repeats this exact redirect-if-not-authed
 // check inline — centralized here so it's a single place to fix (like the
 // unhandled rejection this used to cause: the inline `.then(...)` versions

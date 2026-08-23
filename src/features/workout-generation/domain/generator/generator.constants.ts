@@ -45,3 +45,11 @@ export const DEFAULT_STARTING_LOAD_KG = 20;
 // ADR-0011 decision 3) — checked after the atomic DB increment; exceeding
 // it never errors, it just falls through to the deterministic generator.
 export const DAILY_GENERATION_LIMIT = 20;
+
+// A publicly-credentialed demo account (README) never reaches Groq/
+// OpenRouter at all — deterministic only, regardless of quota — and,
+// unlike DAILY_GENERATION_LIMIT above, exceeding this DOES error rather
+// than silently degrade: a shared public account has no cost ceiling to
+// silently fall back under, so it needs an actual stop rather than a
+// quality downgrade.
+export const DEMO_DAILY_GENERATION_LIMIT = 3;

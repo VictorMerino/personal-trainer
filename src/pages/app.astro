@@ -3,7 +3,7 @@ import Layout from '../shared/ui/Layout.astro';
 import HomeView from '../features/workout-generation/ui/home/HomeView.svelte';
 ---
 
-<Layout title="Personal-TrAIner">
+<Layout title="Personal-TrAIner" navActive="home">
   <HomeView client:load />
   <script>
     import { requireSignedIn } from '../shared/supabase/browser-client';
