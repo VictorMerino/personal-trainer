@@ -57,7 +57,6 @@ about this in the app itself:
 - **Gym logger** — logs sets/reps/RPE against the day's prescribed workout.
 - **Progress tracking** — adherence and training history over time, backed
   by real logged sessions.
-- **Post-workout summary and cooldown flow** for closing out a session.
 
 ## Screenshots
 
